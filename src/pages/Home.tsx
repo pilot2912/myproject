@@ -42,7 +42,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
 
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { homeData, loading, error } = useSelector((state: RootState) => state.home);
+  const { loading, error } = useSelector((state: RootState) => state.home);
   const hasFetched = useRef(false);
 
   const [now, setNow] = React.useState(Date.now());
