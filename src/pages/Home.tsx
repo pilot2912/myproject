@@ -264,7 +264,7 @@ const Home: React.FC = () => {
                ].map((vidhi, idx) => (
                  <div key={idx} className="card card-hover puja-card" style={{ padding: 'clamp(20px, 2.5vw, 28px)', cursor: 'pointer', borderTop: '4px solid var(--maroon)', textAlign: 'center', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <div style={{ fontSize: 'clamp(28px, 5vw, 55px)', marginBottom: 'clamp(14px, 2vw, 20px)' }}>{vidhi.icon}</div>
+                      <div style={{ fontSize: 'clamp(58px, 5vw, 55px)', marginBottom: 'clamp(32px, 2vw, 20px)' }}>{vidhi.icon}</div>
                       <h4 className="serif" style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 600, marginBottom: 0 }}>{vidhi.title}</h4>
                     </div>
                  </div>
