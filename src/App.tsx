@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,6 +17,16 @@ import Puja from './pages/Puja'
 import Blogs from './pages/Blogs'
 import EkadashiDetails from './pages/EkadashiDetails'
 import './App.css'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  return null
+}
 
 function AppContent() {
   const dispatch = useDispatch<AppDispatch>()
@@ -53,6 +63,7 @@ function AppContent() {
         <div className="app">
           <Navbar />
           <main style={{ flex: 1 }}>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/vrat" element={<VratFestivalsPage />} />
