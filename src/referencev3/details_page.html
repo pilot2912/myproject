@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>Kashi Shakti — Varuthini Ekadashi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F6EFE3; --bg-alt: #FDF8EE; --surface: #FFFFFF;
+  --ink: #1E1410; --ink-mid: #4A3A2E; --ink-muted: #8B7461; --ink-faint: #B9A996;
+  --border: #E6D6BE; --border-soft: #F0E4CF;
+  --accent: #B23A1A; --accent-soft: #F0D9CC;
+  --maroon: #7A1F1A; --gold: #A07510; --gold-bright: #C89A2B;
+  --green: #436B2A; --red: #B32021; --blue: #2A4878;
+  --success: #E6EFD8; --warning: #FCEBD5; --danger: #F7DCDC; --info: #E0E8F2;
+  --shadow-sm: 0 1px 3px rgba(60,30,10,0.06);
+  --shadow-md: 0 4px 16px rgba(60,30,10,0.08);
+  --shadow-lg: 0 12px 40px rgba(60,30,10,0.12);
+}
+html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.serif       { font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif; font-optical-sizing: auto; }
+.display     { font-family: 'Fraunces', serif; font-weight: 500; letter-spacing: -0.02em; font-variation-settings: "SOFT" 50, "WONK" 0; }
+.devanagari  { font-family: 'Noto Serif Devanagari', serif; }
+.mono        { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Site Nav */
+.site-nav {
+  height: 72px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 40px; gap: 32px;
+}
+.site-nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px;
+  color: var(--maroon); letter-spacing: -0.02em;
+}
+.site-nav-logo-mark {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif Devanagari', serif; font-size: 16px;
+}
+.site-nav-links { display: flex; gap: 28px; align-items: center; margin-left: 12px; }
+.site-nav-link {
+  font-size: 14px; font-weight: 500; color: var(--ink-mid);
+  text-decoration: none; cursor: pointer; padding: 6px 0;
+  border-bottom: 2px solid transparent;
+}
+.site-nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+.site-nav-spacer { flex: 1; }
+.site-nav-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--ink-muted); }
+.site-nav-lang {
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  display: inline-flex; gap: 6px; cursor: pointer;
+}
+
+/* Buttons & chips */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; font-size: 14px; font-weight: 600; border-radius: 8px; border: 1px solid transparent; cursor: pointer; font-family: inherit; transition: all 0.2s; text-decoration: none; }
+.btn-primary { background: var(--accent); color: #FFF; border-color: var(--accent); }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-link { background: none; border: none; color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer; padding: 0; font-family: inherit; }
+.btn-link:hover { text-decoration: underline; }
+
+/* ========== EKADASHI HERO ========== */
+.eka-hero {
+  position: relative;
+  background: linear-gradient(135deg, #2A1810 0%, #4A2818 60%, #7A1F1A 100%);
+  color: #fff;
+  padding: 80px 40px 120px;
+  overflow: hidden;
+}
+.eka-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20600%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%234A2818%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231E1410%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3CradialGradient%20id%3D%22sun%22%20cx%3D%220.7%22%20cy%3D%220.3%22%20r%3D%220.4%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23F8E8C4%22%20stop-opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23F8E8C4%22%20stop-opacity%3D%220%22%2F%3E%0A%20%20%20%20%3C%2FradialGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%22600%22%20fill%3D%22url(%23sky)%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%22560%22%20cy%3D%22180%22%20r%3D%22200%22%20fill%3D%22url(%23sun)%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M0%20420%20L100%20380%20L200%20410%20L320%20370%20L450%20400%20L600%20360%20L800%20400%20L800%20600%20L0%20600%20Z%22%20fill%3D%22%237A1F1A%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%3Crect%20x%3D%220%22%20y%3D%22500%22%20width%3D%22800%22%20height%3D%22100%22%20fill%3D%22%230A0604%22%2F%3E%0A%20%20%3Crect%20x%3D%220%22%20y%3D%22480%22%20width%3D%22800%22%20height%3D%2220%22%20fill%3D%22%237A1F1A%22%20opacity%3D%220.7%22%2F%3E%0A%20%20%3Crect%20x%3D%220%22%20y%3D%22460%22%20width%3D%22800%22%20height%3D%2220%22%20fill%3D%22%237A1F1A%22%20opacity%3D%220.5%22%2F%3E%0A%20%20%3Cg%20transform%3D%22translate(300%20250)%22%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22-110%2C200%20-90%2C40%20-70%2C200%22%20fill%3D%22%230A0604%22%2F%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22-90%2C40%20-85%2C30%20-80%2C40%22%20fill%3D%22%234A2818%22%2F%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22120%2C200%20100%2C60%2080%2C200%22%20fill%3D%22%230A0604%22%2F%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22100%2C60%20105%2C50%20110%2C60%22%20fill%3D%22%234A2818%22%2F%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22-50%2C250%200%2C-30%2050%2C250%22%20fill%3D%22%230A0604%22%2F%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22-30%2C200%200%2C30%2030%2C200%22%20fill%3D%22%237A1F1A%22%20opacity%3D%220.6%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%220%22%20cy%3D%22-30%22%20r%3D%228%22%20fill%3D%22%234A2818%22%2F%3E%0A%20%20%20%20%3Cpolygon%20points%3D%22-3%2C-38%200%2C-55%203%2C-38%22%20fill%3D%22%234A2818%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22-130%22%20y%3D%22200%22%20width%3D%22260%22%20height%3D%2260%22%20fill%3D%22%230A0604%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-15%20260%20L-15%20220%20Q0%20200%2015%20220%20L15%20260%20Z%22%20fill%3D%22%231E1410%22%20opacity%3D%220.4%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E");
+  background-size: cover; background-position: center;
+  opacity: 0.18; mix-blend-mode: screen;
+}
+.eka-hero::after {
+  content: ''; position: absolute; right: -120px; top: -120px;
+  width: 480px; height: 480px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,154,43,0.4) 0%, transparent 70%);
+}
+.eka-hero-inner {
+  position: relative; max-width: 1280px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 72px; align-items: center;
+}
+.eka-breadcrumbs {
+  display: flex; gap: 8px; font-size: 12px; color: rgba(255,255,255,0.6);
+  margin-bottom: 32px; align-items: center;
+}
+.eka-breadcrumbs a { color: rgba(255,255,255,0.6); text-decoration: none; }
+.eka-breadcrumbs a:hover { color: #fff; }
+.eka-breadcrumbs .sep { color: rgba(255,255,255,0.3); }
+.eka-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+  font-size: 18px; color: var(--gold-bright); margin-bottom: 16px;
+}
+.eka-eyebrow::after {
+  content: ''; flex: 1; max-width: 80px; height: 1px;
+  background: var(--gold-bright); opacity: 0.6;
+}
+.eka-title {
+  font-family: 'Fraunces', serif; font-weight: 500;
+  font-size: 88px; line-height: 0.98; letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+.eka-title-deva {
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 32px; color: var(--gold-bright);
+  margin-bottom: 24px; opacity: 0.9;
+}
+.eka-subtitle {
+  font-size: 17px; line-height: 1.7; color: rgba(255,255,255,0.78);
+  max-width: 540px; margin-bottom: 40px;
+}
+.eka-meta-row {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15);
+}
+.eka-meta { font-size: 13px; min-width: 130px; }
+.eka-meta-label { color: rgba(255,255,255,0.55); margin-bottom: 4px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.eka-meta-value { color: #fff; font-weight: 500; }
+
+/* Hero card on right — featured image + dates */
+.eka-feature-card {
+  background: var(--surface); color: var(--ink);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+  border: 4px solid rgba(255,255,255,0.08);
+}
+.eka-feature-img {
+  height: 280px; background-size: cover; background-position: center;
+  position: relative;
+}
+.eka-feature-img::after {
+  content: 'विष्णु'; position: absolute; bottom: 16px; right: 20px;
+  color: rgba(255,255,255,0.85); font-family: 'Noto Serif Devanagari', serif;
+  font-size: 18px; text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+.eka-feature-body { padding: 28px 32px 32px; }
+.eka-feature-eyebrow { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 8px; }
+.eka-feature-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; margin-bottom: 24px; line-height: 1.2; }
+.eka-dates-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-top: 1px solid var(--border);
+  margin: 0 -32px -32px;
+}
+.eka-date-cell {
+  padding: 20px 32px; border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.eka-date-cell:nth-child(2n) { border-right: none; }
+.eka-date-cell:nth-last-child(-n+2) { border-bottom: none; }
+.eka-date-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 6px; }
+.eka-date-value { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; }
+.eka-date-sub { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+
+/* Content Body */
+.eka-body {
+  display: grid; grid-template-columns: 1fr 320px;
+  gap: 64px;
+  max-width: 1280px;
+  margin: 0 auto; padding: 80px 40px;
+}
+.eka-content { min-width: 0; }
+.eka-content h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 20px; margin-top: 56px; }
+.eka-content h2:first-child { margin-top: 0; }
+.eka-content h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin-bottom: 12px; margin-top: 32px; }
+.eka-content p { font-size: 17px; line-height: 1.75; color: var(--ink-mid); margin-bottom: 18px; }
+.eka-content p.lead { font-family: 'Fraunces', serif; font-weight: 400; font-style: italic; font-size: 22px; line-height: 1.55; color: var(--ink); margin-bottom: 32px; padding-left: 20px; border-left: 3px solid var(--accent); }
+.eka-content ul { margin: 16px 0 24px 20px; }
+.eka-content li { font-size: 16px; line-height: 1.7; color: var(--ink-mid); margin-bottom: 8px; }
+
+.eka-callout {
+  background: #FCEBD5; border-radius: 12px; padding: 24px 28px;
+  border-left: 4px solid var(--gold);
+  margin: 32px 0;
+}
+.eka-callout-title {
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px;
+  color: var(--gold); margin-bottom: 8px;
+}
+.eka-callout p { font-size: 15px; color: var(--ink-mid); margin: 0; }
+
+/* Sidebar */
+.eka-side { position: sticky; top: 96px; align-self: start; }
+.eka-side-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; margin-bottom: 20px;
+}
+.eka-side-card h3 {
+  font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.eka-side-toc { list-style: none; padding: 0; }
+.eka-side-toc li { margin-bottom: 10px; }
+.eka-side-toc a {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--ink-mid); text-decoration: none;
+  padding: 6px 0;
+}
+.eka-side-toc a::before {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--ink-faint);
+}
+.eka-side-toc a.active { color: var(--accent); font-weight: 600; }
+.eka-side-toc a.active::before { background: var(--accent); width: 6px; height: 6px; }
+
+.eka-share { display: flex; gap: 8px; flex-wrap: wrap; }
+.eka-share-btn {
+  width: 38px; height: 38px; border-radius: 999px;
+  background: var(--bg-alt); border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px; color: var(--ink-mid);
+}
+.eka-share-btn.wa { background: #25D366; color: #fff; border-color: #25D366; width: auto; padding: 0 16px; gap: 8px; font-weight: 600; font-size: 13px; }
+
+/* FAQ Section */
+.eka-faq-section { background: var(--bg-alt); padding: 80px 40px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.eka-faq-wrap { max-width: 920px; margin: 0 auto; }
+.eka-faq-head { text-align: center; margin-bottom: 48px; }
+.eka-faq-head h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 44px; letter-spacing: -0.02em; margin-bottom: 12px; }
+.eka-faq-head p { font-size: 16px; color: var(--ink-muted); }
+.eka-faq-list { display: flex; flex-direction: column; gap: 12px; }
+.eka-faq-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 24px;
+}
+.eka-faq-q {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+  font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; line-height: 1.4;
+  cursor: pointer;
+}
+.eka-faq-q .icon {
+  flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 0;
+  font-weight: 700;
+}
+.eka-faq-q .icon::after { font-size: 16px; }
+.eka-faq-item.closed .eka-faq-a { display: none; }
+.eka-faq-item.closed .eka-faq-q .icon::after { content: '+'; }
+.eka-faq-item:not(.closed) .eka-faq-q .icon::after { content: '−'; }
+.eka-faq-a {
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-soft);
+  font-size: 15px; line-height: 1.7; color: var(--ink-mid);
+}
+
+/* Next Ekadashi CTA */
+.eka-next {
+  background: var(--maroon); color: #fff;
+  padding: 60px 40px;
+  position: relative; overflow: hidden;
+}
+.eka-next::before {
+  content: '॥ ॐ ॥'; position: absolute;
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 240px; right: -40px; bottom: -100px;
+  color: rgba(255,255,255,0.04);
+}
+.eka-next-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.eka-next-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-bright); margin-bottom: 12px; }
+.eka-next-title { font-family: 'Fraunces', serif; font-size: 44px; line-height: 1.1; font-weight: 500; margin-bottom: 8px; letter-spacing: -0.02em; }
+.eka-next-deva { font-family: 'Noto Serif Devanagari', serif; font-size: 22px; color: var(--gold-bright); opacity: 0.85; }
+.eka-next-meta { display: flex; gap: 32px; margin-top: 24px; font-size: 13px; color: rgba(255,255,255,0.7); }
+.eka-next-meta strong { color: #fff; font-weight: 600; }
+
+/* Recommended Articles Section */
+.eka-related-section { 
+  background: var(--bg-alt); 
+  padding: 80px 40px; 
+  border-top: 1px solid var(--border); 
+}
+.eka-related-inner { max-width: 1280px; margin: 0 auto; }
+.eka-related-head { 
+  display: flex; 
+  align-items: flex-end; 
+  justify-content: space-between; 
+  margin-bottom: 40px; 
+}
+.eka-related-head h2 { 
+  font-family: 'Fraunces', serif; 
+  font-weight: 500; 
+  font-size: 44px; 
+  letter-spacing: -0.02em; 
+}
+
+.eka-card-grid { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 32px; 
+}
+
+.article-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.article-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+}
+
+.article-card-img {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.article-card-body {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.article-card-tag {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.article-card-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+
+.article-card-excerpt {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-mid);
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.article-card-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.article-card-meta .dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+/* Page Mark */
+.page-divider {
+  margin: 80px auto;
+  max-width: 1280px;
+  display: flex; align-items: center; gap: 24px;
+  color: var(--ink-faint);
+}
+.page-divider::before, .page-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.page-divider-mark {
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 22px; color: var(--accent);
+  letter-spacing: 0.4em;
+}
+
+</style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="site-nav-logo"><span class="site-nav-logo-mark">क</span> Kashi Shakti</div>
+    <div class="site-nav-links">
+      <a class="site-nav-link active">Vrat</a>
+      <a class="site-nav-link">Festivals & Puja</a>
+      <a class="site-nav-link">Varanasi</a>
+      <a class="site-nav-link">Blog</a>
+    </div>
+    <div class="site-nav-spacer"></div>
+    <div class="site-nav-meta">
+      <span>Varanasi · 07 May 2026</span>
+      <span class="site-nav-lang">EN ▾</span>
+    </div>
+  </nav>
+
+  <div class="eka-hero">
+    <div class="eka-hero-inner">
+      <div>
+        <div class="eka-breadcrumbs">
+          <a>Home</a> <span class="sep">/</span>
+          <a>Vrat</a> <span class="sep">/</span>
+          <a>Ekadashi</a> <span class="sep">/</span>
+          <span style="color: rgba(255,255,255,0.85);">Varuthini Ekadashi</span>
+        </div>
+        <div class="eka-eyebrow">Vaishakha · Krishna Paksha · 2026</div>
+        <h1 class="eka-title">Varuthini<br/>Ekadashi</h1>
+        <div class="eka-title-deva">वरुथिनी एकादशी</div>
+        <p class="eka-subtitle">
+          The eleventh tithi of the Krishna Paksha in Vaishakha — observed for protection,
+          forgiveness of past karma, and the grace of Lord Vishnu's Vamana avatar.
+        </p>
+        <div class="eka-meta-row">
+          <div class="eka-meta">
+            <div class="eka-meta-label">Vikrama Samvata</div>
+            <div class="eka-meta-value">2083</div>
+          </div>
+          <div class="eka-meta">
+            <div class="eka-meta-label">Paksha</div>
+            <div class="eka-meta-value">Krishna (Waning)</div>
+          </div>
+          <div class="eka-meta">
+            <div class="eka-meta-label">Hindu Month</div>
+            <div class="eka-meta-value">Vaishakha</div>
+          </div>
+          <div class="eka-meta">
+            <div class="eka-meta-label">Deity</div>
+            <div class="eka-meta-value">Vishnu (Vamana)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="eka-feature-card">
+        <div class="eka-feature-img" style="background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20600%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3CradialGradient%20id%3D%22rg%22%20cx%3D%220.5%22%20cy%3D%220.5%22%20r%3D%220.7%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23B23A1A%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237A1F1A%22%2F%3E%0A%20%20%20%20%3C%2FradialGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22600%22%20height%3D%22600%22%20fill%3D%22url(%23rg)%22%2F%3E%0A%3C%2Fsvg%3E');"></div>
+        <div class="eka-feature-body">
+          <div class="eka-feature-eyebrow">Observance Date</div>
+          <div class="eka-feature-title">Sunday, 12 May 2026</div>
+          <div class="eka-dates-grid">
+            <div class="eka-date-cell">
+              <div class="eka-date-label">Tithi Begins</div>
+              <div class="eka-date-value">04:38 AM</div>
+              <div class="eka-date-sub">12 May 2026</div>
+            </div>
+            <div class="eka-date-cell">
+              <div class="eka-date-label">Tithi Ends</div>
+              <div class="eka-date-value">06:51 AM</div>
+              <div class="eka-date-sub">13 May 2026</div>
+            </div>
+            <div class="eka-date-cell">
+              <div class="eka-date-label">Parana Begins</div>
+              <div class="eka-date-value">05:32 AM</div>
+              <div class="eka-date-sub">13 May 2026</div>
+            </div>
+            <div class="eka-date-cell">
+              <div class="eka-date-label">Parana Ends</div>
+              <div class="eka-date-value">08:18 AM</div>
+              <div class="eka-date-sub">13 May 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="eka-body">
+    <div class="eka-content">
+      <h2 id="eka-significance">Significance & Religious Context</h2>
+      <p class="lead">
+        Varuthini means 'protected' or 'shielded' — those who fast on this day are said to be guarded
+        from misfortune in this life and granted merit equivalent to ten thousand years of penance.
+      </p>
+      <p>
+        Mentioned in the Bhavishya Purana and recounted by Lord Krishna to Yudhishthira, Varuthini
+        Ekadashi falls in the Krishna paksha (waning fortnight) of Vaishakha. It is dedicated to the
+        Vamana avatara of Vishnu — the dwarf form who humbled the demon king Bali and restored
+        cosmic balance with three measured steps.
+      </p>
+
+      <h2 id="eka-rules">Vrat Vidhi — How to Observe</h2>
+      <p>Begin the Vrat from sunrise on Ekadashi and conclude after Dwadashi morning.</p>
+      <ul>
+        <li><strong>Pre-dawn:</strong> Bathe, wear clean clothes, light a diya at the puja sthal.</li>
+        <li><strong>Sankalpa:</strong> Take the fasting vow before an image of Vamana or Vishnu.</li>
+        <li><strong>Day:</strong> Avoid grains, beans, salt, onion, garlic.</li>
+        <li><strong>Parana:</strong> Break the fast next morning during the Parana window.</li>
+      </ul>
+
+      <div class="eka-callout">
+        <div class="eka-callout-title">Important Notes</div>
+        <p>Parana must be performed within the prescribed window. Breaking fast before sunrise on Dwadashi or after the Parana end-time is considered to nullify the merit of the Vrat.</p>
+      </div>
+
+      <h2 id="eka-katha">The Story — Varuthini Vrat Katha</h2>
+      <p>King Mandhata, a great ruler of the Solar dynasty, was once meditating in the forest when a wild bear attacked his foot. Lord Vishnu appeared and rescued him — and instructed him to observe the Varuthini Ekadashi fast to wash away the karma. The king did so, and was restored to his kingdom in full glory.</p>
+
+      <h2 id="eka-mantras">Mantras for the Day</h2>
+      <p style="font-family: 'Noto Serif Devanagari', serif; font-size: 22px; line-height: 1.7; color: var(--maroon); padding: 20px 24px; background: var(--bg-alt); border-radius: 12px;">
+        ॐ नमो भगवते वासुदेवाय ॥<br/>
+        <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink-muted); display: block; margin-top: 8px;">Om Namo Bhagavate Vasudevaya — recited 108 times during the Vrat.</span>
+      </p>
+    </div>
+
+    <aside class="eka-side">
+      <div class="eka-side-card">
+        <h3>On This Page</h3>
+        <ul class="eka-side-toc">
+          <li><a href="#eka-significance" class="active">Significance</a></li>
+          <li><a href="#eka-rules">Vrat Vidhi</a></li>
+          <li><a href="#eka-katha">The Vrat Katha</a></li>
+          <li><a href="#eka-mantras">Mantras</a></li>
+        </ul>
+      </div>
+
+      <div class="eka-side-card">
+        <h3>Share This Page</h3>
+        <div class="eka-share">
+          <button class="eka-share-btn wa">WhatsApp</button>
+          <button class="eka-share-btn">𝕏</button>
+          <button class="eka-share-btn">f</button>
+          <button class="eka-share-btn">📋</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="eka-faq-section">
+    <div class="eka-faq-wrap">
+      <div class="eka-faq-head">
+        <h2>Frequently Asked Questions</h2>
+        <p>Common queries about observing Varuthini Ekadashi correctly.</p>
+      </div>
+      <div class="eka-faq-list">
+        <div class="eka-faq-item">
+          <div class="eka-faq-q">Can pregnant women observe this fast? <span class="icon"></span></div>
+          <div class="eka-faq-a">No — scriptural injunctions explicitly exempt the unwell, pregnant women, the elderly, and growing children. Sincerity of intention is what matters most.</div>
+        </div>
+        <div class="eka-faq-item closed">
+          <div class="eka-faq-q">What food can I eat during the Vrat? <span class="icon"></span></div>
+          <div class="eka-faq-a">Permitted: fruits, milk, makhana, sabudana, singhara flour preparations, rock salt. Avoided: grains (rice, wheat), lentils, regular salt, onion, garlic.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="eka-related-section">
+    <div class="eka-related-inner">
+      <div class="eka-related-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 8px;">Further Reading</div>
+          <h2>Recommended for you</h2>
+        </div>
+        <a href="#" class="btn-link">View all articles →</a>
+      </div>
+
+      <div class="eka-card-grid">
+        <a href="#" class="article-card">
+          <div class="article-card-img" style="background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20400%22%3E%3Crect%20width%3D%22600%22%20height%3D%22400%22%20fill%3D%22%23F0D9CC%22%2F%3E%3C/svg%3E');"></div>
+          <div class="article-card-body">
+            <div class="article-card-tag">Vedic Wisdom</div>
+            <h3 class="article-card-title">Why we keep Ekadashi: A science of the digestive cycle</h3>
+            <p class="article-card-excerpt">Exploring the Ayurvedic and chronobiological reasoning behind the eleventh tithi and its impact on the body.</p>
+            <div class="article-card-meta">
+              <span>12 min read</span>
+              <span class="dot"></span>
+              <span>By Pandit Arjun Sharma</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="article-card">
+          <div class="article-card-img" style="background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20400%22%3E%3Crect%20width%3D%22600%22%20height%3D%22400%22%20fill%3D%22%23E6EFD8%22%2F%3E%3C/svg%3E');"></div>
+          <div class="article-card-body">
+            <div class="article-card-tag">Vrat Katha</div>
+            <h3 class="article-card-title">The Legend of King Mandhata and the Bear</h3>
+            <p class="article-card-excerpt">A deep dive into the Varuthini Vrat Katha and the spiritual symbolism of protection in the Solar dynasty.</p>
+            <div class="article-card-meta">
+              <span>8 min read</span>
+              <span class="dot"></span>
+              <span>By Dr. Vidya Prakash</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="article-card">
+          <div class="article-card-img" style="background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20400%22%3E%3Crect%20width%3D%22600%22%20height%3D%22400%22%20fill%3D%22%23FCEBD5%22%2F%3E%3C/svg%3E');"></div>
+          <div class="article-card-body">
+            <div class="article-card-tag">Varanasi</div>
+            <h3 class="article-card-title">Top Varanasi Temples for Ekadashi Darshan</h3>
+            <p class="article-card-excerpt">A pilgrim's guide to the most significant temples in Kashi to visit specifically on the eleventh lunar day.</p>
+            <div class="article-card-meta">
+              <span>10 min read</span>
+              <span class="dot"></span>
+              <span>By Kashi Shakti Team</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="eka-next">
+    <div class="eka-next-inner">
+      <div>
+        <div class="eka-next-eyebrow">Up Next · Shukla Paksha · Vaishakha</div>
+        <h2 class="eka-next-title">Mohini Ekadashi</h2>
+        <div class="eka-next-deva">मोहिनी एकादशी</div>
+        <div class="eka-next-meta">
+          <span><strong>27 May 2026</strong> · Wednesday</span>
+          <span>Tithi begins <strong>02:14 AM</strong></span>
+          <span>Parana <strong>28 May · 05:33–08:24 AM</strong></span>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="background: var(--gold-bright); border-color: var(--gold-bright); color: var(--ink); padding: 16px 28px; font-size: 15px;">View Mohini Ekadashi →</button>
+    </div>
+  </div>
+
+  <div class="page-divider">
+    <span class="page-divider-mark">॥ ॐ ॥</span>
+  </div>
+
+  <footer style="background: #1E1410; color: #fff; padding: 60px 40px; text-align: center;">
+    <div style="max-width: 1280px; margin: 0 auto;">
+      <div style="font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; margin-bottom: 12px;">Kashi Shakti</div>
+      <div style="font-family: 'Noto Serif Devanagari', serif; font-size: 14px; color: var(--gold-bright); opacity: 0.8; margin-bottom: 24px;">काशी शक्ति · आपका आध्यात्मिक साथी</div>
+      <div style="font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.06em;">© 2026 Kashi Shakti · Per Content Architecture</div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ toggling
+    document.querySelectorAll('.eka-faq-q').forEach(q => {
+      q.addEventListener('click', () => {
+        q.parentElement.classList.toggle('closed');
+      });
+    });
+  </script>
+
+</body>
+</html>

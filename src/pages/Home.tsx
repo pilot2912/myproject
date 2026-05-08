@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { fetchHomeData } from '../store/homeSlice';
 import type { RootState, AppDispatch } from '../store/store';
@@ -42,6 +43,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
 
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.home);
   const hasFetched = useRef(false);
 
@@ -114,7 +116,7 @@ const Home: React.FC = () => {
                   <h2 className="display" style={{ fontSize: 'clamp(22px, 5vw, 32px)', color: 'var(--ink)' }}>Varuthini Ekadashi</h2>
                   <div style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: 'var(--ink-muted)', marginTop: 8 }}>Observe the fast, read the Katha & track Parana timings.</div>
                </div>
-               <button className="btn btn-primary" style={{ width: '100%' }}>View Timings →</button>
+               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => navigate('/ekadashi/Varuthini_Ekadashi')}>View Timings →</button>
             </div>
             
             {/* Festival Countdown */}

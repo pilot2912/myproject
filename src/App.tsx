@@ -15,6 +15,7 @@ import TemplesPage from './pages/Temples'
 import Festivals from './pages/Festivals'
 import Puja from './pages/Puja'
 import Blogs from './pages/Blogs'
+import EkadashiDetails from './pages/EkadashiDetails'
 import './App.css'
 
 function AppContent() {
@@ -59,6 +60,7 @@ function AppContent() {
               <Route path="/festivals" element={<Festivals />} />
               <Route path="/puja" element={<Puja />} />
               <Route path="/blogs" element={<Blogs />} />
+              <Route path="/ekadashi/:ekadashiName" element={<EkadashiDetails />} />
               <Route path="*" element={<Home />} />
             </Routes>
           </main>
