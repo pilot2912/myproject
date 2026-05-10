@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,7 +6,6 @@ import toast, { Toaster } from 'react-hot-toast'
 import { store } from './store/store'
 import { fetchGlobalData } from './store/globalSlice'
 import type { RootState, AppDispatch } from './store/store'
-import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Loading from './components/Loading'
 import Home from './pages/Home'
@@ -17,6 +16,7 @@ import Puja from './pages/Puja'
 import Blogs from './pages/Blogs'
 import EkadashiDetails from './pages/EkadashiDetails'
 import './App.css'
+import Navbar from './components/Navbar'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -72,7 +72,7 @@ function AppContent() {
               <Route path="/puja" element={<Puja />} />
               <Route path="/blogs" element={<Blogs />} />
               <Route path="/ekadashi/:ekadashiName" element={<EkadashiDetails />} />
-              <Route path="*" element={<Home />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
           <Footer />

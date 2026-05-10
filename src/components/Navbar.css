@@ -47,6 +47,13 @@
   padding-bottom: 0px;
   padding-top: 8px;
 }
+.nav-logo-image {
+  height: 50px;
+  width: 150px;
+  object-fit: cover;
+  margin-left: -6px;
+  cursor: pointer;
+}
 
 .nav-logo:hover {
   opacity: 0.8;

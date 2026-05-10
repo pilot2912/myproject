@@ -44,7 +44,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.home);
+  const { loading, error, homeData } = useSelector((state: RootState) => state.home);
   const hasFetched = useRef(false);
 
   const [now, setNow] = React.useState(Date.now());
@@ -81,7 +81,7 @@ const Home: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          background: 'linear-gradient(to bottom, rgba(30, 20, 16, 0.4), rgba(30, 20, 16, 0.85)), url("https://images.unsplash.com/photo-1596423735880-5fec800a5528?ixlib=rb-4.0.3&auto=format&fit=crop&w=2500&q=80") center/cover no-repeat', 
+          background: `linear-gradient(to bottom, rgba(30, 20, 16, 0.4), rgba(30, 20, 16, 0.85)), url("${homeData?.LandingPageBlock?.[0]?.HeroImage?.url}") center/cover no-repeat`,
           backgroundAttachment: window.innerWidth > 768 ? 'fixed' : 'scroll',
           color: '#fff', 
           padding: 'clamp(80px, 15vw, 140px) clamp(16px, 5vw, 40px) clamp(100px, 15vw, 180px)', 
@@ -89,16 +89,29 @@ const Home: React.FC = () => {
           marginTop: '72px'
       }}>
         <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-            <div className="eyebrow" style={{ color: 'var(--gold-bright)', marginBottom: 'clamp(12px, 2vw, 16px)', letterSpacing: '0.2em', fontSize: 'clamp(10px, 2vw, 12px)' }}>Your Gateway to Sanatan Dharma</div>
+            <div className="eyebrow" style={{ color: 'var(--gold-bright)', marginBottom: 'clamp(12px, 2vw, 16px)', letterSpacing: '0.2em', fontSize: 'clamp(10px, 2vw, 12px)' }}>{homeData?.LandingPageBlock?.[0]?.SubHeading || ''}</div>
             <h1 className="display" style={{ fontSize: 'clamp(28px, 8vw, 72px)', lineHeight: 1.05, marginBottom: 'clamp(16px, 3vw, 24px)', textShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
-                One Platform For All Your Spiritual Needs
+                {homeData?.LandingPageBlock?.[0]?.Heading || ''}
             </h1>
             <p style={{ fontSize: 'clamp(14px, 3vw, 20px)', opacity: 0.95, marginBottom: 'clamp(24px, 5vw, 40px)', textShadow: '0 2px 10px rgba(0,0,0,0.6)', fontWeight: 400, lineHeight: 1.6 }}>
-                Discover authentic Vrat Kathas, track precise Panchang timings, learn proper Puja Vidhis, and explore the divine temples of Kashi.
+                {homeData?.LandingPageBlock?.[0]?.Description || ''}
             </p>
             <div style={{ display: 'flex', gap: 'clamp(12px, 3vw, 20px)', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button className="btn btn-primary" style={{ padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)', fontSize: 'clamp(13px, 2vw, 16px)', borderRadius: 12 }}>Explore Platform →</button>
-                <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.5)', padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)', fontSize: 'clamp(13px, 2vw, 16px)', borderRadius: 12, backdropFilter: 'blur(4px)' }}>Read Vrat Kathas</button>
+                {homeData?.LandingPageBlock?.[0]?.HeroLink?.map((link: { id: number; label: string; href: string; isExternal: boolean; Button_Style: string }) => {
+                  if (link?.Button_Style === 'PRIMARY') {
+                    return <button key={link?.id} className="btn btn-primary" style={{ padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)', fontSize: 'clamp(13px, 2vw, 16px)', borderRadius: 12 }} onClick={() => { if (link?.isExternal) {
+                      window.open(link?.href, '_blank');
+                    } else {
+                      navigate(link?.href || '/');
+                    }}}>{link?.label || ''} → </button>
+                  } else {
+                    return <button key={link?.id} className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.5)', padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)', fontSize: 'clamp(13px, 2vw, 16px)', borderRadius: 12, backdropFilter: 'blur(4px)' }} onClick={() => { if (link?.isExternal) {
+                      window.open(link?.href, '_blank');
+                    } else {
+                      navigate(link?.href || '/');
+                    }}}>{link?.label || ''}</button>
+                  }
+                })}
             </div>
         </div>
       </div>
@@ -141,21 +154,13 @@ const Home: React.FC = () => {
       <div className="section-bg-pattern" style={{ padding: 'clamp(30px, 8vw, 40px) 0 clamp(50px, 8vw, 80px)', borderBottom: '1px solid var(--border-soft)' }}>
          <div className="container" style={{ position: 'relative', zIndex: 1 }}>
              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'clamp(30px, 5vw, 48px)', textAlign: 'center' }}>
-                 <div>
-                     <img src="https://img.icons8.com/ios/100/b23a1a/om.png" style={{ width: 'clamp(48px, 8vw, 64px)', height: 'clamp(48px, 8vw, 64px)', marginBottom: 'clamp(12px, 3vw, 20px)' }} alt="Om Icon"/>
-                     <h3 className="serif" style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 600, color: 'var(--ink)', marginBottom: 'clamp(8px, 2vw, 12px)' }}>Authentic Shastric Knowledge</h3>
-                     <p style={{ fontSize: 'clamp(13px, 2vw, 15px)', color: 'var(--ink-mid)', lineHeight: 1.6 }}>100% accurate Panchang, Vrat Kathas, and Puja Vidhis rooted in ancient Vedic texts.</p>
-                 </div>
-                 <div>
-                     <img src="https://img.icons8.com/ios/100/b23a1a/hindu-temple.png" style={{ width: 'clamp(48px, 8vw, 64px)', height: 'clamp(48px, 8vw, 64px)', marginBottom: 'clamp(12px, 3vw, 20px)' }} alt="Temple Icon"/>
-                     <h3 className="serif" style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 600, color: 'var(--ink)', marginBottom: 'clamp(8px, 2vw, 12px)' }}>Detailed Temple Guides</h3>
-                     <p style={{ fontSize: 'clamp(13px, 2vw, 15px)', color: 'var(--ink-mid)', lineHeight: 1.6 }}>Deep historical and spiritual insights into Kashi's sacred ghats, shrines, and corridors.</p>
-                 </div>
-                 <div>
-                     <img src="https://img.icons8.com/ios/100/b23a1a/praying-man.png" style={{ width: 'clamp(48px, 8vw, 64px)', height: 'clamp(48px, 8vw, 64px)', marginBottom: 'clamp(12px, 3vw, 20px)' }} alt="Ritual Icon"/>
-                     <h3 className="serif" style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 600, color: 'var(--ink)', marginBottom: 'clamp(8px, 2vw, 12px)' }}>Comprehensive Rituals</h3>
-                     <p style={{ fontSize: 'clamp(13px, 2vw, 15px)', color: 'var(--ink-mid)', lineHeight: 1.6 }}>Your definitive platform for learning daily Aarti, Chadhava, and spiritual worship processes.</p>
-                 </div>
+                 {homeData?.TrustBadges?.map((badge: { id?: string; image?: { url?: string }; Heading?: string; Description?: string }) => (
+                    <div key={badge?.id}>
+                     <img src={badge?.image?.url || ''} style={{ width: 'clamp(48px, 8vw, 64px)', height: 'clamp(48px, 8vw, 64px)', marginBottom: 'clamp(12px, 3vw, 20px)' }} alt="Badge"/>
+                     <h3 className="serif" style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 600, color: 'var(--ink)', marginBottom: 'clamp(8px, 2vw, 12px)' }}>{badge?.Heading || ''}</h3>
+                     <p style={{ fontSize: 'clamp(13px, 2vw, 15px)', color: 'var(--ink-mid)', lineHeight: 1.6 }}>{badge?.Description || ''}</p>
+                    </div>
+                 ))}
              </div>
          </div>
       </div>
@@ -186,21 +191,15 @@ const Home: React.FC = () => {
       {/* 4. Explore Temples (Immersive & Modern Layout) */}
       <div style={{ background: 'var(--ink)', color: 'var(--surface)', marginTop: 'clamp(60px, 10vw, 100px)', padding: 'clamp(50px, 8vw, 100px) 0' }}>
         <div className="container">
-           <SectionHeader align="center" title="Explore Divine Temples" sub="Journey through the sacred corridors of India." color="var(--surface)" action={<button className="btn btn-ghost" style={{borderColor: 'rgba(255,255,255,0.3)', color: '#fff'}}>View All Temples →</button>} />
+           <SectionHeader align="center" title={homeData?.FeaturedTemples?.heading || ''} sub={homeData?.FeaturedTemples?.description || ''} color="var(--surface)" action={<button onClick={() => {homeData?.FeaturedTemples?.Link?.isExternal ? window.open(homeData?.FeaturedTemples?.Link?.href, '_blank') : navigate(homeData?.FeaturedTemples?.Link?.href)}} className="btn btn-ghost" style={{borderColor: 'rgba(255,255,255,0.3)', color: '#fff'}}>{`${homeData?.FeaturedTemples?.Link?.label} →`}</button>} />
            
            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(16px, 3vw, 24px)', marginTop: 'clamp(30px, 5vw, 48px)' }}>
-              {[
-                { name: 'Kashi Vishwanath Corridor', loc: 'Kashi Darshan', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80', featured: true },
-                { name: 'Sankat Mochan', loc: 'Varanasi', img: 'https://images.unsplash.com/photo-1514222026211-13c5ec8233ed?auto=format&fit=crop&w=600&q=80' },
-                { name: 'Mahakaleshwar', loc: 'Ujjain', img: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=600&q=80' },
-                { name: 'Ram Mandir', loc: 'Ayodhya', img: 'https://images.unsplash.com/photo-1600078686884-6014d5e21fb2?auto=format&fit=crop&w=600&q=80' },
-                { name: 'Dashashwamedh', loc: 'Varanasi Ghat', img: 'https://images.unsplash.com/photo-1596423735880-5fec800a5528?auto=format&fit=crop&w=600&q=80' }
-              ].map((tmpl, idx) => (
-                <div key={idx} className="card card-hover" style={{ position: 'relative', background: `linear-gradient(to top, rgba(0,0,0,0.8), transparent), url("${tmpl.img}") center/cover`, border: 'none', cursor: 'pointer', minHeight: 'clamp(200px, 30vw, 280px)', gridColumn: tmpl.featured ? 'span 1' : 'span 1' }}>
+              {homeData?.FeaturedTemples?.temples?.map((tmpl: { id?: number; image?: { url?: string }; featured?: boolean; Title?: string; Location?: string }) => (
+                <div key={tmpl?.id} className="card card-hover" style={{ position: 'relative', background: `linear-gradient(to top, rgba(0,0,0,0.8), transparent), url("${tmpl.image?.url || ''}") center/cover`, border: 'none', cursor: 'pointer', minHeight: 'clamp(200px, 30vw, 280px)', gridColumn: tmpl.featured ? 'span 1' : 'span 1', backgroundColor: 'grey' }}>
                    <div style={{ position: 'absolute', bottom: 'clamp(12px, 3vw, 20px)', left: 'clamp(12px, 3vw, 20px)' }}>
                       {tmpl.featured && <span className="chip" style={{ background: 'var(--accent)', color: '#fff', border: 'none', marginBottom: 8, display: 'inline-block', fontSize: 'clamp(10px, 2vw, 12px)' }}>Featured</span>}
-                      <div className="serif" style={{ fontSize: 'clamp(16px, 3vw, 22px)', fontWeight: 600, color: '#fff', marginBottom: 4 }}>{tmpl.name}</div>
-                      <div style={{ fontSize: 'clamp(12px, 2vw, 13px)', color: 'var(--gold-bright)', fontWeight: 500 }}>📍 {tmpl.loc}</div>
+                      <div className="serif" style={{ fontSize: 'clamp(16px, 3vw, 22px)', fontWeight: 600, color: '#fff', marginBottom: 4 }}>{tmpl?.Title || ''}</div>
+                      <div style={{ fontSize: 'clamp(12px, 2vw, 13px)', color: 'var(--gold-bright)', fontWeight: 500 }}>📍 {tmpl?.Location || ''}</div>
                    </div>
                 </div>
               ))}
@@ -235,20 +234,16 @@ const Home: React.FC = () => {
          
          {/* Vrat Katha List */}
          <div>
-            <SectionHeader title="Vrat Kathas" sub="Read the authentic stories behind the fasts." action={<button className="btn-link">View Library →</button>}/>
+            <SectionHeader title={homeData?.FeaturedVrats?.heading || ''} sub={homeData?.FeaturedVrats?.Description || ''} action={<button onClick={() => {homeData?.FeaturedVrats?.VratLink?.isExternal ? window.open(homeData?.FeaturedVrats?.VratLink?.href, '_blank') : navigate(homeData?.FeaturedVrats?.VratLink?.href)}} className="btn-link">{`${homeData?.FeaturedVrats?.VratLink?.label || ''} →`}</button>}/>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(12px, 2vw, 16px)' }}>
-               {[
-                 { title: 'Shri Satyanarayan Katha', desc: 'Complete katha for full moon fasting.', img: 'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?w=150&q=80' },
-                 { title: 'Varuthini Ekadashi Katha', desc: 'The legendary tale of King Mandhata.', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=150&q=80' },
-                 { title: 'Somvati Amavasya Katha', desc: 'Significance of ancestral offerings.', img: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=150&q=80' }
-               ].map((katha, idx) => (
-                 <div key={idx} className="card card-hover katha-card" style={{ display: 'flex', width: '100%', padding: '12px 14px', alignItems: 'center', cursor: 'pointer', gap: '12px', textAlign: 'left' }}>
-                    <div className="bg-image-cover" style={{ width: 72, height: 72, minWidth: 72, borderRadius: 12, backgroundImage: `url(${katha.img})` }}></div>
+               {homeData?.FeaturedVrats?.vrat_kathas?.map((katha: { id?: number; img?: string; Title?: string; ShortDescription?: string }) => (
+                 <div key={katha?.id} className="card card-hover katha-card" style={{ display: 'flex', width: '100%', padding: '12px 14px', alignItems: 'center', cursor: 'pointer', gap: '12px', textAlign: 'left' }}>
+                    <div className="bg-image-cover" style={{ width: 72, height: 72, minWidth: 72, borderRadius: 12, backgroundImage: `url(${katha?.img})`, backgroundColor: 'grey', alignSelf: 'baseline' }}></div>
                     <div style={{ flex: 1 }}>
-                       <h4 className="serif" style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>{katha.title}</h4>
-                       <p style={{ fontSize: 13, color: 'var(--ink-mid)', lineHeight: 1.5 }}>{katha.desc}</p>
+                       <h4 className="serif" style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>{katha?.Title}</h4>
+                       <p style={{ fontSize: 13, color: 'var(--ink-mid)', lineHeight: 1.5 }}>{katha?.ShortDescription}</p>
                     </div>
-                    <button className="btn btn-ghost btn-sm" style={{ borderRadius: 100, whiteSpace: 'nowrap', padding: '8px 12px' }}>Read 📖</button>
+                    <button className="btn btn-ghost btn-sm" style={{ borderRadius: 100, whiteSpace: 'nowrap', padding: '8px 12px', alignSelf: 'flex-start' }}>Read 📖</button>
                  </div>
                ))}
             </div>
@@ -256,18 +251,13 @@ const Home: React.FC = () => {
 
          {/* Puja Vidhi Step Cards */}
          <div>
-            <SectionHeader title="Puja Vidhi" sub="Step-by-step guides for home worship." action={<button className="btn-link">All Vidhis →</button>}/>
+            <SectionHeader title={homeData?.FeaturedPujaVidhi?.Heading || ''} sub={homeData?.FeaturedPujaVidhi?.description || ''} action={<button onClick={() => {homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.isExternal ? window.open(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href, '_blank') : navigate(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href)}} className="btn-link">{`${homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.label || ''} →`}</button>}/>
             <div className="puja-grid" style={{ gap: 'clamp(16px, 2vw, 24px)' }}>
-               {[
-                 { title: 'Rudrabhishek', steps: '12 Steps', icon: '🔱' },
-                 { title: 'Ganesh Sthapana', steps: '8 Steps', icon: '🐘' },
-                 { title: 'Diwali Lakshmi Puja', steps: '15 Steps', icon: '🪔' },
-                 { title: 'Tulsi Vivah', steps: '10 Steps', icon: '🌿' }
-               ].map((vidhi, idx) => (
-                 <div key={idx} className="card card-hover puja-card" style={{ padding: 'clamp(20px, 2.5vw, 28px)', cursor: 'pointer', borderTop: '4px solid var(--maroon)', textAlign: 'center', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+               {homeData?.FeaturedPujaVidhi?.puja_vidhis?.map((vidhi: { id?: number; icon?: string; Title?: string }) => (
+                 <div key={vidhi?.id} className="card card-hover puja-card" style={{ padding: 'clamp(20px, 2.5vw, 28px)', cursor: 'pointer', borderTop: '4px solid var(--maroon)', textAlign: 'center', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <div style={{ fontSize: 'clamp(58px, 5vw, 55px)', marginBottom: 'clamp(32px, 2vw, 20px)' }}>{vidhi.icon}</div>
-                      <h4 className="serif" style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 600, marginBottom: 0 }}>{vidhi.title}</h4>
+                      <div style={{ fontSize: 'clamp(58px, 5vw, 55px)', marginBottom: 'clamp(32px, 2vw, 20px)' }}>{vidhi?.icon}</div>
+                      <h4 className="serif" style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 600, marginBottom: 0 }}>{vidhi?.Title}</h4>
                     </div>
                  </div>
                ))}

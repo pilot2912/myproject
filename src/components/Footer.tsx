@@ -1,39 +1,37 @@
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { useNavigate } from "react-router-dom";
+
 const Footer = () => {
+  const navigate = useNavigate();
+  const { globalData } = useSelector((state: RootState) => state.global)
+
+  const footerData = useMemo(() => globalData?.Footer, [globalData])
   return (
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-grid">
           <div>
-            <div className="footer-brand">
-              <div className="footer-logo">ॐ</div>
-              Kashi Shakti
-            </div>
+            <img onClick={() => navigate(footerData?.Logo?.href || '/')} src={footerData?.Logo?.image?.url} alt="Kashi Shakti" className='nav-logo-image' />
             <p className="footer-copy">
-              Authentic Vedic rituals performed by verified pandits at India's most revered temples.<br/>सर्वे भवन्तु सुखिनः.
+              {footerData?.BrandInformation || ''}
             </p>
           </div>
           <div className="footer-menus">
-            <div>
-              <div className="footer-heading">Services</div>
-              <div className="footer-links">
-                <span className="footer-link">Book Puja</span>
-                <span className="footer-link">Panchang</span>
-                <span className="footer-link">Vrat Tracker</span>
-                <span className="footer-link">Aarti & Kathas</span>
+            {footerData?.menus?.map((menu: { id: number; title: string; NavLink: { href: string; label: string; id: number }[] }) => (
+              <div key={menu.id}>
+                <div className="footer-heading">{menu?.title || ''}</div>
+                  <div className="footer-links">
+                    {menu?.NavLink?.map((nav) => <span key={nav?.id} onClick={() => { navigate(nav?.href || '/') }} className="footer-link">{nav?.label || ''}</span>)}
               </div>
-            </div>
-            <div>
-              <div className="footer-heading">Support</div>
-              <div className="footer-links">
-                <span className="footer-link">Contact Us</span>
-                <span className="footer-link">Privacy Policy</span>
-                <span className="footer-link">Terms of Service</span>
               </div>
-            </div>
+            ))}
           </div>
         </div>
         <div className="footer-meta">
-          <span>© 2026 Kashi Shakti · Made with devotion in Varanasi</span>
+          <span>{footerData?.CopyrightText || ''}</span>
+          {/* <span>🪔 1,24,000+ sankalps offered</span> */}
           <span>🪔 1,24,000+ sankalps offered</span>
         </div>
       </div>
