@@ -575,6 +575,9 @@ body {
   .list-label {
     font-size: 14px;
   }
+  .alignMobile {
+    align-self: baseline;
+  }
 }
 
 @media (max-width: 480px) {

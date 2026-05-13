@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import toast, { Toaster } from 'react-hot-toast'
 import { store } from './store/store'
-import { fetchGlobalData } from './store/globalSlice'
+import { fetchGlobalData, fetchNextEkadashiData } from './store/globalSlice'
 import type { RootState, AppDispatch } from './store/store'
 import Footer from './components/Footer'
 import Loading from './components/Loading'
@@ -37,6 +37,7 @@ function AppContent() {
     if (!hasFetched.current) {
       hasFetched.current = true
       dispatch(fetchGlobalData())
+      dispatch(fetchNextEkadashiData())
     }
   }, [dispatch])
 
@@ -71,7 +72,7 @@ function AppContent() {
               <Route path="/festivals" element={<Festivals />} />
               <Route path="/puja" element={<Puja />} />
               <Route path="/blogs" element={<Blogs />} />
-              <Route path="/ekadashi/:ekadashiName" element={<EkadashiDetails />} />
+              <Route path="/ekadashi/:id" element={<EkadashiDetails />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>

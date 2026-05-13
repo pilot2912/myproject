@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { fetchHomeData } from '../store/homeSlice';
 import type { RootState, AppDispatch } from '../store/store';
 import Loading from '../components/Loading';
+import { formatDate } from '../common/functions';
 
 interface SectionHeaderProps {
   title: string;
@@ -45,6 +46,7 @@ const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error, homeData } = useSelector((state: RootState) => state.home);
+  const { nearestData } = useSelector((state: RootState) => state.global);
   const hasFetched = useRef(false);
 
   const [now, setNow] = React.useState(Date.now());
@@ -52,7 +54,28 @@ const Home: React.FC = () => {
     const i = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(i);
   }, []);
-  const d = 3, h = 14, m = 22, s = 59 - new Date(now).getSeconds();
+
+  const [d, h, m, s, lunarData] = useMemo(() => {
+    if (!nearestData?.upcomingFestival?.Date) return [0,0,0,0];
+
+    const targetDate = new Date(
+      nearestData?.upcomingFestival?.Date + "T00:00:00"
+    );
+    const diff = targetDate.getTime() - now;
+    const d = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+    const h = Math.max(0, Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+    const m = Math.max(0, Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
+    const s = Math.max(0, Math.floor((diff % (1000 * 60)) / 1000));
+
+    const nearestFestival = {...nearestData?.upcomingFestival, tag: 'Festival'};
+    const nearestAmavasya = {...nearestData?.upcomingAmavasya, tag: 'Amavasya', Date: nearestData?.upcomingAmavasya?.AmavasyaDate};
+    const nearestEkadashi = {...nearestData?.upcomingEkadashi, tag: 'Ekadashi', highlight: true };
+    const nearestPurnima = {...nearestData?.upcomingPurnima, tag: 'Purnima', Date: nearestData?.upcomingPurnima?.PurnimaDate};
+
+    const lunarData = [nearestAmavasya, nearestEkadashi, nearestPurnima, nearestFestival];
+    return [d, h, m, s, lunarData];
+
+  }, [nearestData, now]);
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -75,16 +98,16 @@ const Home: React.FC = () => {
     <div className="page-enter" style={{ paddingBottom: 0 }}>
       
       {/* 1. Impactful Full-Screen Hero Section */}
-      <div style={{ 
-          position: 'relative', 
+      <div style={{
+          position: 'relative',
           minHeight: 'clamp(60vh, 95vh, 100vh)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           background: `linear-gradient(to bottom, rgba(30, 20, 16, 0.4), rgba(30, 20, 16, 0.85)), url("${homeData?.LandingPageBlock?.[0]?.HeroImage?.url}") center/cover no-repeat`,
           backgroundAttachment: window.innerWidth > 768 ? 'fixed' : 'scroll',
-          color: '#fff', 
-          padding: 'clamp(80px, 15vw, 140px) clamp(16px, 5vw, 40px) clamp(100px, 15vw, 180px)', 
+          color: '#fff',
+          padding: 'clamp(80px, 15vw, 140px) clamp(16px, 5vw, 40px) clamp(100px, 15vw, 180px)',
           textAlign: 'center',
           marginTop: '72px'
       }}>
@@ -124,19 +147,19 @@ const Home: React.FC = () => {
                <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 'clamp(8px, 2vw, 12px)', flexWrap: 'wrap' }}>
                       <span className="chip chip-accent">Next Sacred Fast</span>
-                      <span style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: 'var(--ink-mid)', fontWeight: 600 }}>26 April 2026</span>
+                      <span style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: 'var(--ink-mid)', fontWeight: 600 }}>{formatDate(nearestData?.upcomingEkadashi?.Date || '')}</span>
                   </div>
-                  <h2 className="display" style={{ fontSize: 'clamp(22px, 5vw, 32px)', color: 'var(--ink)' }}>Varuthini Ekadashi</h2>
-                  <div style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: 'var(--ink-muted)', marginTop: 8 }}>Observe the fast, read the Katha & track Parana timings.</div>
+                  <h2 className="display" style={{ fontSize: 'clamp(22px, 5vw, 32px)', color: 'var(--ink)' }}>{nearestData?.upcomingEkadashi?.Title || ''}</h2>
+                  <div style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: 'var(--ink-muted)', marginTop: 8 }}>{nearestData?.upcomingEkadashi?.ShortDescription || ''}</div>
                </div>
-               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => navigate('/ekadashi/Varuthini_Ekadashi')}>View Timings →</button>
+               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => navigate(`/ekadashi/${nearestData?.upcomingEkadashi?.id}`)}>View Timings →</button>
             </div>
             
             {/* Festival Countdown */}
             <div className="card" style={{ padding: 'clamp(20px, 4vw, 32px)', display: 'flex', flexDirection: 'column', gap: 'clamp(12px, 2vw, 16px)', boxShadow: 'var(--shadow-lg)', background: 'var(--bg-alt)' }}>
                <div>
                   <div className="eyebrow" style={{ marginBottom: 8, color: 'var(--maroon)', width: '100%' }}>Major Festival Upcoming</div>
-                  <h2 className="serif" style={{ fontSize: 'clamp(20px, 4vw, 24px)', color: 'var(--ink)', fontWeight: 600 }}>Ram Navami</h2>
+                  <h2 className="serif" style={{ fontSize: 'clamp(20px, 4vw, 24px)', color: 'var(--ink)', fontWeight: 600 }}>{nearestData?.upcomingFestival?.Title || ''}</h2>
                </div>
                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(60px, 1fr))', gap: 'clamp(8px, 2vw, 12px)', textAlign: 'center' }}>
                   {[[d,'Days'],[h,'Hours'],[m,'Mins'],[s,'Secs']].map(([val, lbl], i) => (
@@ -169,19 +192,13 @@ const Home: React.FC = () => {
       <div className="container" style={{ padding: 'clamp(50px, 8vw, 80px) clamp(16px, 5vw, 40px) 0', position: 'relative', zIndex: 1 }}>
          <SectionHeader title="Sacred Lunar Days" sub="Track all upcoming observances based on your city's Panchang." />
          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 'clamp(12px, 3vw, 20px)', paddingTop: 10 }}>
-            {[
-              { type: 'Vrat', name: 'Pradosh Vrat', date: '03 May 2026', img: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=400&q=80' },
-              { type: 'Ekadashi', name: 'Varuthini', date: '26 Apr 2026', highlight: true, img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=400&q=80' },
-              { type: 'Purnima', name: 'Chaitra Purnima', date: '15 Apr 2026', img: 'https://images.unsplash.com/photo-1514222026211-13c5ec8233ed?w=400&q=80' },
-              { type: 'Amavasya', name: 'Chaitra Amavasya', date: '27 Apr 2026', img: 'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?w=400&q=80' },
-              { type: 'Pradosh', name: 'Shukla Pradosh', date: '03 May 2026', img: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=400&q=80' },
-            ].map((t, idx) => (
+            {lunarData?.map((t, idx) => (
               <div key={idx} className="card card-hover" style={{ borderTop: t.highlight ? '4px solid var(--accent)' : '1px solid var(--border)' }}>
-                 <div className="bg-image-cover" style={{ height: 'clamp(70px, 15vw, 100px)', backgroundImage: `url(${t.img})` }}></div>
+                 <div className="bg-image-cover" style={{ height: 'clamp(70px, 15vw, 100px)', backgroundImage: `url(${t?.FeaturedImage?.url || ''})` }}></div>
                  <div style={{ padding: 'clamp(12px, 2vw, 16px) clamp(12px, 2vw, 20px)' }}>
-                     <div className="eyebrow" style={{ marginBottom: 6, color: t.highlight ? 'var(--accent)' : 'var(--ink-muted)', fontSize: 'clamp(8px, 1.5vw, 10px)' }}>Nearest {t.type}</div>
-                     <div className="serif" style={{ fontSize: 'clamp(14px, 2.5vw, 18px)', fontWeight: 600, color: 'var(--ink)' }}>{t.name}</div>
-                     <div style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: 'var(--ink-mid)', marginTop: 6, fontWeight: 500 }}>{t.date}</div>
+                     <div className="eyebrow" style={{ marginBottom: 6, color: t.highlight ? 'var(--accent)' : 'var(--ink-muted)', fontSize: 'clamp(8px, 1.5vw, 10px)' }}>Nearest {t?.tag}</div>
+                     <div className="serif" style={{ fontSize: 'clamp(14px, 2.5vw, 18px)', fontWeight: 600, color: 'var(--ink)' }}>{t?.Title}</div>
+                     <div style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: 'var(--ink-mid)', marginTop: 6, fontWeight: 500 }}>{formatDate(t?.Date || '')}</div>
                  </div>
               </div>
             ))}
@@ -194,8 +211,8 @@ const Home: React.FC = () => {
            <SectionHeader align="center" title={homeData?.FeaturedTemples?.heading || ''} sub={homeData?.FeaturedTemples?.description || ''} color="var(--surface)" action={<button onClick={() => {homeData?.FeaturedTemples?.Link?.isExternal ? window.open(homeData?.FeaturedTemples?.Link?.href, '_blank') : navigate(homeData?.FeaturedTemples?.Link?.href)}} className="btn btn-ghost" style={{borderColor: 'rgba(255,255,255,0.3)', color: '#fff'}}>{`${homeData?.FeaturedTemples?.Link?.label} →`}</button>} />
            
            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(16px, 3vw, 24px)', marginTop: 'clamp(30px, 5vw, 48px)' }}>
-              {homeData?.FeaturedTemples?.temples?.map((tmpl: { id?: number; image?: { url?: string }; featured?: boolean; Title?: string; Location?: string }) => (
-                <div key={tmpl?.id} className="card card-hover" style={{ position: 'relative', background: `linear-gradient(to top, rgba(0,0,0,0.8), transparent), url("${tmpl.image?.url || ''}") center/cover`, border: 'none', cursor: 'pointer', minHeight: 'clamp(200px, 30vw, 280px)', gridColumn: tmpl.featured ? 'span 1' : 'span 1', backgroundColor: 'grey' }}>
+              {homeData?.FeaturedTemples?.temples?.map((tmpl: { id?: number; FeaturedImage?: { url?: string }; featured?: boolean; Title?: string; Location?: string }) => (
+                <div key={tmpl?.id} className="card card-hover" style={{ position: 'relative', background: `linear-gradient(to top, rgba(0,0,0,0.8), transparent), url("${tmpl.FeaturedImage?.url || ''}") center/cover`, border: 'none', cursor: 'pointer', minHeight: 'clamp(200px, 30vw, 280px)', gridColumn: tmpl.featured ? 'span 1' : 'span 1', backgroundColor: 'grey' }}>
                    <div style={{ position: 'absolute', bottom: 'clamp(12px, 3vw, 20px)', left: 'clamp(12px, 3vw, 20px)' }}>
                       {tmpl.featured && <span className="chip" style={{ background: 'var(--accent)', color: '#fff', border: 'none', marginBottom: 8, display: 'inline-block', fontSize: 'clamp(10px, 2vw, 12px)' }}>Featured</span>}
                       <div className="serif" style={{ fontSize: 'clamp(16px, 3vw, 22px)', fontWeight: 600, color: '#fff', marginBottom: 4 }}>{tmpl?.Title || ''}</div>
@@ -236,10 +253,10 @@ const Home: React.FC = () => {
          <div>
             <SectionHeader title={homeData?.FeaturedVrats?.heading || ''} sub={homeData?.FeaturedVrats?.Description || ''} action={<button onClick={() => {homeData?.FeaturedVrats?.VratLink?.isExternal ? window.open(homeData?.FeaturedVrats?.VratLink?.href, '_blank') : navigate(homeData?.FeaturedVrats?.VratLink?.href)}} className="btn-link">{`${homeData?.FeaturedVrats?.VratLink?.label || ''} →`}</button>}/>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(12px, 2vw, 16px)' }}>
-               {homeData?.FeaturedVrats?.vrat_kathas?.map((katha: { id?: number; img?: string; Title?: string; ShortDescription?: string }) => (
+               {homeData?.FeaturedVrats?.vrat_kathas?.map((katha: { id?: number; FeaturedImage?: { url?: string}; Title?: string; ShortDescription?: string }) => (
                  <div key={katha?.id} className="card card-hover katha-card" style={{ display: 'flex', width: '100%', padding: '12px 14px', alignItems: 'center', cursor: 'pointer', gap: '12px', textAlign: 'left' }}>
-                    <div className="bg-image-cover" style={{ width: 72, height: 72, minWidth: 72, borderRadius: 12, backgroundImage: `url(${katha?.img})`, backgroundColor: 'grey', alignSelf: 'baseline' }}></div>
-                    <div style={{ flex: 1 }}>
+                    <div className="bg-image-cover" style={{ width: 72, height: 72, minWidth: 72, borderRadius: 12, backgroundImage: `url(${katha?.FeaturedImage?.url})`, backgroundColor: 'grey', alignSelf: 'baseline' }}></div>
+                    <div className="alignMobile" style={{ flex: 1 }}>
                        <h4 className="serif" style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>{katha?.Title}</h4>
                        <p style={{ fontSize: 13, color: 'var(--ink-mid)', lineHeight: 1.5 }}>{katha?.ShortDescription}</p>
                     </div>
@@ -253,10 +270,10 @@ const Home: React.FC = () => {
          <div>
             <SectionHeader title={homeData?.FeaturedPujaVidhi?.Heading || ''} sub={homeData?.FeaturedPujaVidhi?.description || ''} action={<button onClick={() => {homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.isExternal ? window.open(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href, '_blank') : navigate(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href)}} className="btn-link">{`${homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.label || ''} →`}</button>}/>
             <div className="puja-grid" style={{ gap: 'clamp(16px, 2vw, 24px)' }}>
-               {homeData?.FeaturedPujaVidhi?.puja_vidhis?.map((vidhi: { id?: number; icon?: string; Title?: string }) => (
+               {homeData?.FeaturedPujaVidhi?.puja_vidhis?.map((vidhi: { id?: number; FeaturedImage?: { url: string }; Title?: string }) => (
                  <div key={vidhi?.id} className="card card-hover puja-card" style={{ padding: 'clamp(20px, 2.5vw, 28px)', cursor: 'pointer', borderTop: '4px solid var(--maroon)', textAlign: 'center', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <div>
-                      <div style={{ fontSize: 'clamp(58px, 5vw, 55px)', marginBottom: 'clamp(32px, 2vw, 20px)' }}>{vidhi?.icon}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '20px', alignItems: 'center' }}>
+                      <img src={vidhi?.FeaturedImage?.url} alt={vidhi?.Title} style={{ width: '85px', height: '85px', objectFit: 'cover', marginBottom: '8px' }} />
                       <h4 className="serif" style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 600, marginBottom: 0 }}>{vidhi?.Title}</h4>
                     </div>
                  </div>

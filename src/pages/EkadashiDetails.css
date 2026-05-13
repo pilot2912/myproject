@@ -164,7 +164,7 @@
 }
 
 .eka-feature-img::after {
-  content: 'विष्णु';
+  /* content: 'विष्णु'; */
   position: absolute;
   bottom: 16px;
   right: 20px;
@@ -304,6 +304,9 @@
 }
 
 .eka-content ul {
+  margin: clamp(12px, 2vw, 16px) 0 clamp(16px, 3vw, 24px) clamp(16px, 3vw, 20px);
+}
+.eka-content ol {
   margin: clamp(12px, 2vw, 16px) 0 clamp(16px, 3vw, 24px) clamp(16px, 3vw, 20px);
 }
 
@@ -651,6 +654,17 @@
   background-size: cover;
   background-position: center;
   position: relative;
+}
+.recom-card-img {
+  height: 180px;
+  width: 100%;
+  object-fit: cover;
+}
+/* Responsive adjustments */
+@media (min-width: 1100px) {
+  .recom-card-img {
+    height: 220px;
+  }
 }
 
 .article-card-body {

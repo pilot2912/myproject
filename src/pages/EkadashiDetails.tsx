@@ -1,34 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EkadashiDetails.css';
-
-interface EkadashiData {
-  name: string;
-  devanagariName: string;
-  date: string;
-  month: string;
-  year: string;
-  paksha: string;
-  deity: string;
-  vikramaSamvata: string;
-  tithiBegins: string;
-  tithiBeginsDate: string;
-  tithiEnds: string;
-  tithiEndsDate: string;
-  paranaBegins: string;
-  paranaBeginsDate: string;
-  paranaEnds: string;
-  paranaEndsDate: string;
-  significance: string;
-  vratVidhi: string[];
-  vratKatha: string;
-  mantras: string;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEkadashiDetails } from '../store/detailSlice';
+import { AppDispatch, RootState } from '../store/store';
+import { formatDate, formatDateTime, getDayFromDate } from '../common/functions';
+import Loading from '../components/Loading';
 
 const EkadashiDetails: React.FC = () => {
-  const { ekadashiName } = useParams<{ ekadashiName: string }>();
+  const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('eka-significance');
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchEkadashiDetails(id))
+    }
+  }, [id]);
+  const { loading, ekadashiDetailData } = useSelector((state: RootState) => state.detail);
+
+  const recommendedData = useMemo(() => {
+    const temples = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-temples')?.temples?.map((temple: any) => ({ ... temple, type: 'Temple'}));
+    const festivals = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-festivals')?.festivals?.map((festival: any) => ({ ... festival, type: 'Festival'}));
+    const pujaVidhis = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-puja-vidhi')?.puja_vidhis?.map((puja: any) => ({ ... puja, type: 'Puja Vidhi'}));
+    const vratKathas = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-vrat-katha')?.vrat_kathas?.map((katha: any) => ({ ... katha, type: 'Vrat Katha'}));
+    return [...(temples || []), ...(festivals || []), ...(pujaVidhis || []), ...(vratKathas || [])];
+  }, [ekadashiDetailData])
+  
 
   const handleTocClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
@@ -47,40 +46,27 @@ const EkadashiDetails: React.FC = () => {
     }
   };
 
-  // Sample data - In a real application, this would come from an API or database
-  const ekadashiDataMap: { [key: string]: EkadashiData } = {
-    'Varuthini_Ekadashi': {
-      name: 'Varuthini Ekadashi',
-      devanagariName: 'वरुथिनी एकादशी',
-      date: 'Sunday, 12 May 2026',
-      month: 'Vaishakha',
-      year: '2026',
-      paksha: 'Krishna (Waning)',
-      deity: 'Vishnu (Vamana)',
-      vikramaSamvata: '2083',
-      tithiBegins: '04:38 AM',
-      tithiBeginsDate: '12 May 2026',
-      tithiEnds: '06:51 AM',
-      tithiEndsDate: '13 May 2026',
-      paranaBegins: '05:32 AM',
-      paranaBeginsDate: '13 May 2026',
-      paranaEnds: '08:18 AM',
-      paranaEndsDate: '13 May 2026',
-      significance: 'The eleventh tithi of the Krishna Paksha in Vaishakha — observed for protection, forgiveness of past karma, and the grace of Lord Vishnu\'s Vamana avatar.',
-      vratVidhi: [
-        'Pre-dawn: Bathe, wear clean clothes, light a diya at the puja sthal.',
-        'Sankalpa: Take the fasting vow before an image of Vamana or Vishnu.',
-        'Day: Avoid grains, beans, salt, onion, garlic.',
-        'Parana: Break the fast next morning during the Parana window.'
-      ],
-      vratKatha: 'King Mandhata, a great ruler of the Solar dynasty, was once meditating in the forest when a wild bear attacked his foot. Lord Vishnu appeared and rescued him — and instructed him to observe the Varuthini Ekadashi fast to wash away the karma. The king did so, and was restored to his kingdom in full glory.',
-      mantras: 'ॐ नमो भगवते वासुदेवाय ॥'
+  const renderChildText = (bold: boolean, italic: boolean, type: string, url: string, text: string, linkText: string) => {
+    if (bold) {
+      return <strong key={text}>{text}</strong>;
+    } else if (italic) {
+      return <em key={text}>{text}</em>;
+    } else if (bold && italic) {
+      return <em key={text}><strong>{text}</strong></em>;
+    } else if (type === 'link') {
+      return <a key={text} href={url} style={{ color: 'darkred', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">{linkText}</a>;
+    } else if (bold && type === 'link') {
+      return <a key={text} href={url} style={{ color: 'darkred', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer"><strong>{linkText}</strong></a>;
+    } else if (italic && type === 'link') {
+      return <a key={text} href={url} style={{ color: 'darkred', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer"><em>{linkText}</em></a>;
+    } else if (bold && italic && type === 'link') {
+      return <a key={text} href={url} style={{ color: 'darkred', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer"><em><strong>{linkText}</strong></em></a>;
+    } else {
+      return text || '';
     }
-  };
+  }
 
-  const ekadashiData = ekadashiDataMap[ekadashiName || 'Varuthini_Ekadashi'];
-
-  if (!ekadashiData) {
+  if (!ekadashiDetailData) {
     return (
       <div className="page-error" style={{ paddingTop: '120px', textAlign: 'center' }}>
         <h2 style={{ fontSize: 'clamp(24px, 6vw, 36px)', color: 'var(--ink)', marginBottom: 16 }}>Ekadashi not found</h2>
@@ -90,36 +76,45 @@ const EkadashiDetails: React.FC = () => {
     );
   }
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div style={{ paddingBottom: 0 }}>
       {/* Hero Section */}
       <div className="eka-hero" style={{ paddingTop: '122px' }}>
         <div className="eka-hero-inner">
           <div>
-            <div className="eka-eyebrow">{ekadashiData.month} · {ekadashiData.paksha} · {ekadashiData.year}</div>
+            <div className="eka-eyebrow">{ekadashiDetailData?.EkadashiMonth?.Month} · {ekadashiDetailData?.EkadashiPaksha} · {ekadashiDetailData?.Date?.slice(0,4)}</div>
             <h1 className="eka-title">
-              {ekadashiData.name.split(' ')[0]}<br/>{ekadashiData.name.split(' ')[1]}
+              {ekadashiDetailData?.Title?.split(' ').map((word: string, index: number) => (
+                <span key={index}>
+                  {word}
+                  <br />
+                </span>
+              ))}
             </h1>
-            <div className="eka-title-deva">{ekadashiData.devanagariName}</div>
+            <div className="eka-title-deva">{'not available'}</div>
             <p className="eka-subtitle">
-              {ekadashiData.significance}
+              {ekadashiDetailData?.ShortDescription}
             </p>
             <div className="eka-meta-row">
               <div className="eka-meta">
                 <div className="eka-meta-label">Vikrama Samvata</div>
-                <div className="eka-meta-value">{ekadashiData.vikramaSamvata}</div>
+                <div className="eka-meta-value">{ekadashiDetailData?.VikramSamvataYear}</div>
               </div>
               <div className="eka-meta">
                 <div className="eka-meta-label">Paksha</div>
-                <div className="eka-meta-value">{ekadashiData.paksha}</div>
+                <div className="eka-meta-value">{ekadashiDetailData?.EkadashiPaksha}</div>
               </div>
               <div className="eka-meta">
                 <div className="eka-meta-label">Hindu Month</div>
-                <div className="eka-meta-value">{ekadashiData.month}</div>
+                <div className="eka-meta-value">{ekadashiDetailData?.EkadashiMonth?.Month}</div>
               </div>
               <div className="eka-meta">
                 <div className="eka-meta-label">Deity</div>
-                <div className="eka-meta-value">{ekadashiData.deity}</div>
+                <div className="eka-meta-value">{ekadashiDetailData?.Deity?.Deity}</div>
               </div>
             </div>
           </div>
@@ -127,31 +122,31 @@ const EkadashiDetails: React.FC = () => {
           {/* Feature Card */}
           <div className="eka-feature-card">
             <div className="eka-feature-img" style={{
-              background: 'linear-gradient(135deg, #B23A1A 0%, #7A1F1A 100%)'
+              background: `url("${ekadashiDetailData?.FeaturedImage?.url}") center/cover no-repeat`
             }}></div>
             <div className="eka-feature-body">
               <div className="eka-feature-eyebrow">Observance Date</div>
-              <div className="eka-feature-title">{ekadashiData.date}</div>
+              <div className="eka-feature-title">{`${getDayFromDate(ekadashiDetailData?.Date || '')} • ${formatDate(ekadashiDetailData?.Date)}`}</div>
               <div className="eka-dates-grid">
                 <div className="eka-date-cell">
                   <div className="eka-date-label">Tithi Begins</div>
-                  <div className="eka-date-value">{ekadashiData.tithiBegins}</div>
-                  <div className="eka-date-sub">{ekadashiData.tithiBeginsDate}</div>
+                  <div className="eka-date-value">{formatDateTime(ekadashiDetailData?.EkadashiTime?.StartTime || '').time}</div>
+                  <div className="eka-date-sub">{formatDateTime(ekadashiDetailData?.EkadashiTime?.StartTime || '').formattedDate}</div>
                 </div>
                 <div className="eka-date-cell">
                   <div className="eka-date-label">Tithi Ends</div>
-                  <div className="eka-date-value">{ekadashiData.tithiEnds}</div>
-                  <div className="eka-date-sub">{ekadashiData.tithiEndsDate}</div>
+                  <div className="eka-date-value">{formatDateTime(ekadashiDetailData?.EkadashiTime?.EndTime || '').time}</div>
+                  <div className="eka-date-sub">{formatDateTime(ekadashiDetailData?.EkadashiTime?.EndTime || '').formattedDate}</div>
                 </div>
                 <div className="eka-date-cell">
                   <div className="eka-date-label">Parana Begins</div>
-                  <div className="eka-date-value">{ekadashiData.paranaBegins}</div>
-                  <div className="eka-date-sub">{ekadashiData.paranaBeginsDate}</div>
+                  <div className="eka-date-value">{formatDateTime(ekadashiDetailData?.ParanaTime?.StartTime || '').time}</div>
+                  <div className="eka-date-sub">{formatDateTime(ekadashiDetailData?.ParanaTime?.StartTime || '').formattedDate}</div>
                 </div>
                 <div className="eka-date-cell">
                   <div className="eka-date-label">Parana Ends</div>
-                  <div className="eka-date-value">{ekadashiData.paranaEnds}</div>
-                  <div className="eka-date-sub">{ekadashiData.paranaEndsDate}</div>
+                  <div className="eka-date-value">{formatDateTime(ekadashiDetailData?.ParanaTime?.EndTime || '').time}</div>
+                  <div className="eka-date-sub">{formatDateTime(ekadashiDetailData?.ParanaTime?.EndTime || '').formattedDate}</div>
                 </div>
               </div>
             </div>
@@ -162,31 +157,46 @@ const EkadashiDetails: React.FC = () => {
       {/* Content Body */}
       <div className="eka-body">
         <div className="eka-content">
-          <h2 id="eka-significance">Significance & Religious Context</h2>
-          <p className="lead">
-            Varuthini means 'protected' or 'shielded' — those who fast on this day are said to be guarded
-            from misfortune in this life and granted merit equivalent to ten thousand years of penance.
-          </p>
-          <p>
-            Mentioned in the Bhavishya Purana and recounted by Lord Krishna to Yudhishthira, {ekadashiData.name}
-            falls in the {ekadashiData.paksha} of {ekadashiData.month}. It is dedicated to the
-            {ekadashiData.deity} avatar of Vishnu.
-          </p>
+          {ekadashiDetailData?.Description?.map((description: { type?: string; level?: number; children?: { children?: { text?: string }[]; text?: string, bold?: boolean, italic?: boolean, type?: string, url?: string }[]; format?: string }, index: number) => {
+            if (description?.type === 'heading') {
+              switch (description?.level) {
+                case 1:
+                  return <h1 id={String(index)} key={index}>{description?.children?.map((child) => renderChildText(child?.bold || false, child?.italic || false, child?.type || '', child?.url || '', child?.text || '', child?.children?.[0]?.text || ''))}</h1>;
+                case 2:
+                  return <h2 id={String(index)} key={index}>{description?.children?.map((child) => renderChildText(child?.bold || false, child?.italic || false, child?.type || '', child?.url || '', child?.text || '', child?.children?.[0]?.text || ''))}</h2>;
+                case 3:
+                  return <h3 id={String(index)} key={index}>{description?.children?.map((child) => renderChildText(child?.bold || false, child?.italic || false, child?.type || '', child?.url || '', child?.text || '', child?.children?.[0]?.text || ''))}</h3>;
+                default:
+                  return null;
+              }
+            } else if (description?.type === 'paragraph') {
+              return <p key={index}>{description?.children?.map((child) => renderChildText(child?.bold || false, child?.italic || false, child?.type || '', child?.url || '', child?.text || '', child?.children?.[0]?.text || ''))}</p>;
+              // return <p key={index} className="lead">{description?.children?.[0]?.text}</p>;
+            } else if (description?.type === 'list') {
+              switch (description?.format) {
+                case 'ordered':
+                  return <ol key={index}>{description?.children?.map((item: { children?: { text?: string, bold?: boolean, italic?: boolean, type?: string, url?: string, children?: { text?: string }[] }[] }, idx: number) => <li key={idx}>{item?.children?.map((child) => renderChildText(child?.bold || false, child?.italic || false, child?.type || '', child?.url || '', child?.text || '', child?.children?.[0]?.text || ''))}</li>)}</ol>;
+                case 'unordered':
+                  return <ul key={index}>{description?.children?.map((item: { children?: { text?: string, bold?: boolean, italic?: boolean, type?: string, url?: string, children?: { text?: string }[] }[] }, idx: number) => <li key={idx}>{item?.children?.map((child) => renderChildText(child?.bold || false, child?.italic || false, child?.type || '', child?.url || '', child?.text || '', child?.children?.[0]?.text || ''))}</li>)}</ul>;
+                default:
+                  return null;
+              }
+            } else {
+              return null;
+            }
+          })}
 
-          <h2 id="eka-rules">Vrat Vidhi — How to Observe</h2>
-          <p>Begin the Vrat from sunrise on Ekadashi and conclude after Dwadashi morning.</p>
-          <ul>
-            {ekadashiData.vratVidhi.map((item, idx) => (
-              <li key={idx}><strong>{item.split(':')[0]}:</strong> {item.split(':')[1]}</li>
-            ))}
-          </ul>
 
-          <h2 id="eka-katha">The Story — {ekadashiData.name} Vrat Katha</h2>
-          <p>{ekadashiData.vratKatha}</p>
-          <div className="eka-callout">
-            <div className="eka-callout-title">Important Notes</div>
-            <p>Parana must be performed within the prescribed window. Breaking fast before sunrise on Dwadashi or after the Parana end-time is considered to nullify the merit of the Vrat.</p>
-          </div>
+
+
+
+
+          {ekadashiDetailData?.Notes?.trim()?.length > 0 && (
+            <div className="eka-callout">
+              <div className="eka-callout-title">Important Notes</div>
+              <p>{ekadashiDetailData?.Notes}</p>
+            </div>
+          )}
 
         </div>
 
@@ -195,13 +205,17 @@ const EkadashiDetails: React.FC = () => {
           <div className="eka-side-card">
             <h3>On This Page</h3>
             <ul className="eka-side-toc">
-              <li><a href="#eka-significance" className={activeTab === 'eka-significance' ? 'active' : ''} onClick={(e) => handleTocClick(e, 'eka-significance')}>Significance</a></li>
-              <li><a href="#eka-rules" className={activeTab === 'eka-rules' ? 'active' : ''} onClick={(e) => handleTocClick(e, 'eka-rules')}>Vrat Vidhi</a></li>
-              <li><a href="#eka-katha" className={activeTab === 'eka-katha' ? 'active' : ''} onClick={(e) => handleTocClick(e, 'eka-katha')}>The Vrat Katha</a></li>
+              {ekadashiDetailData?.Description?.map((desc: { type?: string; id?: string; children?: { text?: string }[] }, index: number) => (desc?.type === 'heading' ? (
+                <li key={index}>
+                  <a href={`#${index}`} className={activeTab === String(index) ? 'active' : ''} onClick={(e) => handleTocClick(e, String(index))}>
+                    {desc?.children?.[0]?.text}
+                  </a>
+                </li>
+              ) : null))}
             </ul>
           </div>
 
-          <div className="eka-side-card">
+          {/* <div className="eka-side-card">
             <h3>Share This Page</h3>
             <div className="eka-share">
               <button className="eka-share-btn wa">WhatsApp</button>
@@ -209,7 +223,7 @@ const EkadashiDetails: React.FC = () => {
               <button className="eka-share-btn">f</button>
               <button className="eka-share-btn">📋</button>
             </div>
-          </div>
+          </div> */}
         </aside>
       </div>
 
@@ -218,23 +232,17 @@ const EkadashiDetails: React.FC = () => {
         <div className="eka-faq-wrap">
           <div className="eka-faq-head">
             <h2>Frequently Asked Questions</h2>
-            <p>Common queries about observing {ekadashiData.name} correctly.</p>
+            <p>Common queries about observing {ekadashiDetailData?.Title || 'Ekadashi'} correctly.</p>
           </div>
           <div className="eka-faq-list">
-            <FAQItem
-              question="Can pregnant women observe this fast?"
-              answer="No — scriptural injunctions explicitly exempt the unwell, pregnant women, the elderly, and growing children. Sincerity of intention is what matters most."
-            />
-            <FAQItem
-              question="What food can I eat during the Vrat?"
-              answer="Permitted: fruits, milk, makhana, sabudana, singhara flour preparations, rock salt. Avoided: grains (rice, wheat), lentils, regular salt, onion, garlic."
-              defaultOpen={false}
-            />
-            <FAQItem
-              question="When should I break my fast?"
-              answer="You must break your fast (Parana) during the prescribed time window. Breaking it before sunrise on Dwadashi or after the Parana end-time nullifies the fast's merit."
-              defaultOpen={false}
-            />
+            {ekadashiDetailData?.EkadashiBlock?.filter((block: { __component: string }) => block?.__component === 'shared.fa-qs')?.map((faqBlock: { id: number; Question: string; Answer: string }, index: number) => (
+              <FAQItem
+                key={faqBlock?.id}
+                question={faqBlock?.Question}
+                answer={faqBlock?.Answer}
+                defaultOpen={index === 0}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -247,34 +255,19 @@ const EkadashiDetails: React.FC = () => {
               <div className="eyebrow" style={{ marginBottom: 8 }}>Further Reading</div>
               <h2>Recommended for you</h2>
             </div>
-            <a href="#" className="btn-link">View all articles →</a>
+            {/* <a href="#" className="btn-link">View all articles →</a> */}
           </div>
 
           <div className="eka-card-grid">
-            <ArticleCard
-              tag="Vedic Wisdom"
-              title="Why we keep Ekadashi: A science of the digestive cycle"
-              excerpt="Exploring the Ayurvedic and chronobiological reasoning behind the eleventh tithi and its impact on the body."
-              readTime="12 min read"
-              author="By Pandit Arjun Sharma"
-              bgColor="#F0D9CC"
-            />
-            <ArticleCard
-              tag="Vrat Katha"
-              title="The Legend of King Mandhata and the Bear"
-              excerpt="A deep dive into the Varuthini Vrat Katha and the spiritual symbolism of protection in the Solar dynasty."
-              readTime="8 min read"
-              author="By Dr. Vidya Prakash"
-              bgColor="#E6EFD8"
-            />
-            <ArticleCard
-              tag="Varanasi"
-              title="Top Varanasi Temples for Ekadashi Darshan"
-              excerpt="A pilgrim's guide to the most significant temples in Kashi to visit specifically on the eleventh lunar day."
-              readTime="10 min read"
-              author="By Kashi Shakti Team"
-              bgColor="#FCEBD5"
-            />
+            {recommendedData?.map((item: any) => (
+              <ArticleCard
+                key={item?.id}
+                tag={item?.type}
+                title={item?.Title}
+                excerpt={item?.ShortDescription}
+                bgImg={item?.FeaturedImage?.url}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -283,16 +276,18 @@ const EkadashiDetails: React.FC = () => {
       <div className="eka-next">
         <div className="eka-next-inner">
           <div>
-            <div className="eka-next-eyebrow">Up Next · Shukla Paksha · Vaishakha</div>
-            <h2 className="eka-next-title">Mohini Ekadashi</h2>
-            <div className="eka-next-deva">मोहिनी एकादशी</div>
+            <div className="eka-next-eyebrow">{`Up Next · ${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.EkadashiPaksha} · ${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.EkadashiMonth?.Month}`}</div>
+            <h2 className="eka-next-title">{ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Title}</h2>
+            <div className="eka-next-deva">{ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ShortDescription}</div>
             <div className="eka-next-meta">
-              <span><strong>27 May 2026</strong> · Wednesday</span>
-              <span>Tithi begins <strong>02:14 AM</strong></span>
-              <span>Parana <strong>28 May · 05:33–08:24 AM</strong></span>
+              <span><strong>{formatDate(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Date)}</strong> · {getDayFromDate(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Date)}</span>
+              <span>Tithi begins <strong>{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.EkadashiTime?.StartTime || '').formattedDate} · {formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.EkadashiTime?.StartTime || '').time}</strong></span>
+              <span>Parana <strong>{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.StartTime || '').formattedDate} · {formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.StartTime || '').time}{' '}–{' '}{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.EndTime || '').time}</strong></span>
             </div>
           </div>
-          <button className="btn btn-primary" style={{ background: 'var(--gold-bright)', borderColor: 'var(--gold-bright)', color: 'var(--ink)', padding: '16px 28px', fontSize: 15 }} onClick={() => navigate('/ekadashi/Mohini_Ekadashi')}>View Mohini Ekadashi →</button>
+          <button className="btn btn-primary" style={{ background: 'var(--gold-bright)', borderColor: 'var(--gold-bright)', color: 'var(--ink)', padding: '16px 28px', fontSize: 15 }} onClick={() => navigate(`/ekadashi/${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.id}`) }>
+            {`View ${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Title} →`}
+          </button>
         </div>
       </div>
 
@@ -314,24 +309,24 @@ interface ArticleCardProps {
   tag: string;
   title: string;
   excerpt: string;
-  readTime: string;
-  author: string;
-  bgColor: string;
+  bgImg: string;
 }
 
-const ArticleCard: React.FC<ArticleCardProps> = ({ tag, title, excerpt, readTime, author, bgColor }) => {
+const ArticleCard: React.FC<ArticleCardProps> = ({ tag, title, excerpt, bgImg }) => {
   return (
     <a href="#" className="article-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div className="article-card-img" style={{ backgroundColor: bgColor }}></div>
+      <div className="article-card-img">
+        <img className="recom-card-img" src={bgImg} alt={title} />
+      </div>
       <div className="article-card-body">
         <div className="article-card-tag">{tag}</div>
         <h3 className="article-card-title">{title}</h3>
         <p className="article-card-excerpt">{excerpt}</p>
-        <div className="article-card-meta">
+        {/* <div className="article-card-meta">
           <span>{readTime}</span>
           <span className="dot"></span>
           <span>{author}</span>
-        </div>
+        </div> */}
       </div>
     </a>
   );

@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import globalReducer from './globalSlice'
 import homeReducer from './homeSlice'
+import detailReducer from './detailSlice'
 
 export const store = configureStore({
   reducer: {
     global: globalReducer,
     home: homeReducer,
+    detail: detailReducer,
   },
 })
 
