@@ -472,17 +472,17 @@
 }
 
 .eka-faq-head h2 {
-  font-family: 'Fraunces', serif;
-  font-weight: 500;
-  font-size: clamp(28px, 6vw, 44px);
+  font-family: 'Fraunces', serif !important;
+  font-weight: 500 !important;
+  font-size: clamp(28px, 6vw, 44px) !important;
   letter-spacing: -0.02em;
   margin-bottom: 12px;
   color: var(--ink);
 }
 
 .eka-faq-head p {
-  font-size: clamp(14px, 2vw, 16px);
-  color: var(--ink-muted);
+  font-size: clamp(14px, 2vw, 16px) !important;
+  color: var(--ink-muted) !important;
 }
 
 .eka-faq-list {

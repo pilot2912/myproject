@@ -45,7 +45,7 @@
 html, body { height: 100%; scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif !important;
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;

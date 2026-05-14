@@ -9,6 +9,7 @@ package-lock.json
 
 # Vite output
 dist/
+.next
 
 # Logs
 npm-debug.log*
