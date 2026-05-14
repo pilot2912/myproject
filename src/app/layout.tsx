@@ -6,6 +6,7 @@ import "../index.css"
 import ScrollToTop from "../components/ScrollToTop"
 import ToastProvider from "../components/ToastProvider"
 import GlobalLoader from "../components/GlobalLoader"
+import GlobalDataInitializer from "@/components/GlobalDataInitializer"
 
 export default function RootLayout({
   children,
@@ -19,6 +20,7 @@ export default function RootLayout({
           <ToastProvider />
           <ScrollToTop />
           <GlobalLoader />
+          <GlobalDataInitializer />
 
           <div className="app">
             <Navbar />

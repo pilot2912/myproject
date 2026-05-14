@@ -20,10 +20,10 @@ const EkadashiDetails = ({ slug }: { slug: string }) => {
   const { ekadashiDetailData } = useSelector((state: RootState) => state.detail);
 
   const recommendedData = useMemo(() => {
-    const temples = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-temples')?.temples?.map((temple: any) => ({ ... temple, type: 'Temple'}));
-    const festivals = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-festivals')?.festivals?.map((festival: any) => ({ ... festival, type: 'Festival'}));
-    const pujaVidhis = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-puja-vidhi')?.puja_vidhis?.map((puja: any) => ({ ... puja, type: 'Puja Vidhi'}));
-    const vratKathas = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-vrat-katha')?.vrat_kathas?.map((katha: any) => ({ ... katha, type: 'Vrat Katha'}));
+    const temples = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-temples')?.temples?.map((temple: any) => ({ ... temple, type: 'Temple', id: `temple-${temple.id}`}));
+    const festivals = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-festivals')?.festivals?.map((festival: any) => ({ ... festival, type: 'Festival', id: `festival-${festival.id}`}));
+    const pujaVidhis = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-puja-vidhi')?.puja_vidhis?.map((puja: any) => ({ ... puja, type: 'Puja Vidhi', id: `puja-${puja.id}`}));
+    const vratKathas = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-vrat-katha')?.vrat_kathas?.map((katha: any) => ({ ... katha, type: 'Vrat Katha', id: `katha-${katha.id}`}));
     return [...(temples || []), ...(festivals || []), ...(pujaVidhis || []), ...(vratKathas || [])];
   }, [ekadashiDetailData])
   
