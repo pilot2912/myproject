@@ -3,8 +3,8 @@ import { BASE_URL } from '../constants'
 
 export const fetchEkadashiDetails = createAsyncThunk(
   'detail/fetchEkadashiDetails',
-  async (id: string) => {
-    const response = await fetch(`${BASE_URL}/ekadashis/${id}`)
+  async (slug: string) => {
+    const response = await fetch(`${BASE_URL}/ekadashis/slug/${slug}`)
     if (!response.ok) {
       throw new Error('Failed to fetch ekadashi details')
     }

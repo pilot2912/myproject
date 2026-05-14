@@ -9,15 +9,15 @@ import Loading from '../components/Loading';
 
 const EkadashiDetails: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('eka-significance');
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchEkadashiDetails(id))
+    if (slug) {
+      dispatch(fetchEkadashiDetails(slug))
     }
-  }, [id]);
+  }, [slug]);
   const { loading, ekadashiDetailData } = useSelector((state: RootState) => state.detail);
 
   const recommendedData = useMemo(() => {
@@ -66,6 +66,10 @@ const EkadashiDetails: React.FC = () => {
     }
   }
 
+  if (loading) {
+    return <Loading />;
+  }
+
   if (!ekadashiDetailData) {
     return (
       <div className="page-error" style={{ paddingTop: '120px', textAlign: 'center' }}>
@@ -74,10 +78,6 @@ const EkadashiDetails: React.FC = () => {
         <button className="btn btn-primary" onClick={() => navigate('/')}>Go back to home</button>
       </div>
     );
-  }
-
-  if (loading) {
-    return <Loading />;
   }
 
   return (
@@ -285,7 +285,7 @@ const EkadashiDetails: React.FC = () => {
               <span>Parana <strong>{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.StartTime || '').formattedDate} · {formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.StartTime || '').time}{' '}–{' '}{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.EndTime || '').time}</strong></span>
             </div>
           </div>
-          <button className="btn btn-primary" style={{ background: 'var(--gold-bright)', borderColor: 'var(--gold-bright)', color: 'var(--ink)', padding: '16px 28px', fontSize: 15 }} onClick={() => navigate(`/ekadashi/${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.id}`) }>
+          <button className="btn btn-primary" style={{ background: 'var(--gold-bright)', borderColor: 'var(--gold-bright)', color: 'var(--ink)', padding: '16px 28px', fontSize: 15 }} onClick={() => navigate(`/ekadashi/${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Slug}`) }>
             {`View ${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Title} →`}
           </button>
         </div>

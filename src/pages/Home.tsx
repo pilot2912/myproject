@@ -152,7 +152,7 @@ const Home: React.FC = () => {
                   <h2 className="display" style={{ fontSize: 'clamp(22px, 5vw, 32px)', color: 'var(--ink)' }}>{nearestData?.upcomingEkadashi?.Title || ''}</h2>
                   <div style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: 'var(--ink-muted)', marginTop: 8 }}>{nearestData?.upcomingEkadashi?.ShortDescription || ''}</div>
                </div>
-               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => navigate(`/ekadashi/${nearestData?.upcomingEkadashi?.id}`)}>View Timings →</button>
+               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => navigate(`/ekadashi/${nearestData?.upcomingEkadashi?.Slug}`)}>View Timings →</button>
             </div>
             
             {/* Festival Countdown */}

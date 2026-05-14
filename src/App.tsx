@@ -72,7 +72,7 @@ function AppContent() {
               <Route path="/festivals" element={<Festivals />} />
               <Route path="/puja" element={<Puja />} />
               <Route path="/blogs" element={<Blogs />} />
-              <Route path="/ekadashi/:id" element={<EkadashiDetails />} />
+              <Route path="/ekadashi/:slug" element={<EkadashiDetails />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
