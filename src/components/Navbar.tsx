@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+'use client'
+import Link from "next/link"
 import { useMemo, useState } from 'react'
 import './Navbar.css'
 import { useSelector } from 'react-redux'
@@ -14,18 +15,18 @@ const Navbar = () => {
   return (
     <>
       <nav className="nav">
-        <NavLink to={headerData?.Logo?.href || '/'} className="nav-logo">
+        <Link href={headerData?.Logo?.href || '/'} className="nav-logo">
           {/* <div className="nav-logo-mark">ॐ</div>
           <div>Kashi <span style={{ fontWeight: 400 }}>Shakti</span></div> */}
-          <img src={headerData?.Logo?.image?.url} alt="Kashi Shakti" className='nav-logo-image' />
-        </NavLink>
+          <img src={headerData?.Logo?.image?.url || null} alt="Kashi Shakti" className='nav-logo-image' />
+        </Link>
         
         <div className="nav-menu">
-          {headerData?.menu?.NavLink?.map((item: { href: string; label: string; id: number }) => (
-            <NavLink to={item.href} className="nav-link" key={item.id}>
+          {headerData?.menu?.NavLink?.length ? headerData?.menu?.NavLink?.map((item: { href: string; label: string; id: number }) => (
+            <Link href={item.href || '/'} className="nav-link" key={item.id}>
               {item.label}
-            </NavLink>
-          ))}
+            </Link>
+          )) : null }
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -40,11 +41,11 @@ const Navbar = () => {
       
       {menuOpen && (
         <div className="mobile-menu">
-          {headerData?.menu?.NavLink?.map((item: { href: string; label: string; id: number }) => (
-            <NavLink to={item.href} className="mobile-nav-link" key={item.id} onClick={() => setMenuOpen(false)}>
+          {headerData?.menu?.NavLink?.length ? headerData?.menu?.NavLink?.map((item: { href: string; label: string; id: number }) => (
+            <Link href={item.href || '/'} className="mobile-nav-link" key={item.id} onClick={() => setMenuOpen(false)}>
               {item.label}
-            </NavLink>
-          ))}
+            </Link>
+          )) : null }
         </div>
       )}
     </>

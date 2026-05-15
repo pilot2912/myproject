@@ -1,16 +1,15 @@
+"use client"
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import './EkadashiDetails.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEkadashiDetails } from '../store/detailSlice';
 import { AppDispatch, RootState } from '../store/store';
 import { formatDate, formatDateTime, getDayFromDate } from '../common/functions';
-import Loading from '../components/Loading';
 
-const EkadashiDetails: React.FC = () => {
+const EkadashiDetails = ({ slug }: { slug: string }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('eka-significance');
 
   useEffect(() => {
@@ -18,13 +17,13 @@ const EkadashiDetails: React.FC = () => {
       dispatch(fetchEkadashiDetails(slug))
     }
   }, [slug]);
-  const { loading, ekadashiDetailData } = useSelector((state: RootState) => state.detail);
+  const { ekadashiDetailData } = useSelector((state: RootState) => state.detail);
 
   const recommendedData = useMemo(() => {
-    const temples = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-temples')?.temples?.map((temple: any) => ({ ... temple, type: 'Temple'}));
-    const festivals = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-festivals')?.festivals?.map((festival: any) => ({ ... festival, type: 'Festival'}));
-    const pujaVidhis = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-puja-vidhi')?.puja_vidhis?.map((puja: any) => ({ ... puja, type: 'Puja Vidhi'}));
-    const vratKathas = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-vrat-katha')?.vrat_kathas?.map((katha: any) => ({ ... katha, type: 'Vrat Katha'}));
+    const temples = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-temples')?.temples?.map((temple: any) => ({ ... temple, type: 'Temple', id: `temple-${temple.id}`}));
+    const festivals = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-festivals')?.festivals?.map((festival: any) => ({ ... festival, type: 'Festival', id: `festival-${festival.id}`}));
+    const pujaVidhis = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-puja-vidhi')?.puja_vidhis?.map((puja: any) => ({ ... puja, type: 'Puja Vidhi', id: `puja-${puja.id}`}));
+    const vratKathas = ekadashiDetailData?.EkadashiBlock?.find((item: { __component: string }) => item?.__component === 'shared.related-vrat-katha')?.vrat_kathas?.map((katha: any) => ({ ... katha, type: 'Vrat Katha', id: `katha-${katha.id}`}));
     return [...(temples || []), ...(festivals || []), ...(pujaVidhis || []), ...(vratKathas || [])];
   }, [ekadashiDetailData])
   
@@ -32,6 +31,8 @@ const EkadashiDetails: React.FC = () => {
   const handleTocClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
     setActiveTab(sectionId);
+
+    if (typeof window === "undefined") return;
 
     const element = document.getElementById(sectionId);
     if (element) {
@@ -66,19 +67,15 @@ const EkadashiDetails: React.FC = () => {
     }
   }
 
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (!ekadashiDetailData) {
-    return (
-      <div className="page-error" style={{ paddingTop: '120px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 'clamp(24px, 6vw, 36px)', color: 'var(--ink)', marginBottom: 16 }}>Ekadashi not found</h2>
-        <p style={{ color: 'var(--ink-muted)', marginBottom: 32 }}>The ekadashi you're looking for doesn't exist.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/')}>Go back to home</button>
-      </div>
-    );
-  }
+  // if (!ekadashiDetailData) {
+  //   return (
+  //     <div className="page-error" style={{ paddingTop: '120px', textAlign: 'center' }}>
+  //       <h2 style={{ fontSize: 'clamp(24px, 6vw, 36px)', color: 'var(--ink)', marginBottom: 16 }}>Ekadashi not found</h2>
+  //       <p style={{ color: 'var(--ink-muted)', marginBottom: 32 }}>The ekadashi you're looking for doesn't exist.</p>
+  //       <button className="btn btn-primary" onClick={() => router.push('/')}>Go back to home</button>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div style={{ paddingBottom: 0 }}>
@@ -122,7 +119,7 @@ const EkadashiDetails: React.FC = () => {
           {/* Feature Card */}
           <div className="eka-feature-card">
             <div className="eka-feature-img" style={{
-              background: `url("${ekadashiDetailData?.FeaturedImage?.url}") center/cover no-repeat`
+              background: `url("${ekadashiDetailData?.FeaturedImage?.url || ''}") center/cover no-repeat`
             }}></div>
             <div className="eka-feature-body">
               <div className="eka-feature-eyebrow">Observance Date</div>
@@ -265,7 +262,7 @@ const EkadashiDetails: React.FC = () => {
                 tag={item?.type}
                 title={item?.Title}
                 excerpt={item?.ShortDescription}
-                bgImg={item?.FeaturedImage?.url}
+                bgImg={item?.FeaturedImage?.url || null}
               />
             ))}
           </div>
@@ -285,7 +282,7 @@ const EkadashiDetails: React.FC = () => {
               <span>Parana <strong>{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.StartTime || '').formattedDate} · {formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.StartTime || '').time}{' '}–{' '}{formatDateTime(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.ParanaTime?.EndTime || '').time}</strong></span>
             </div>
           </div>
-          <button className="btn btn-primary" style={{ background: 'var(--gold-bright)', borderColor: 'var(--gold-bright)', color: 'var(--ink)', padding: '16px 28px', fontSize: 15 }} onClick={() => navigate(`/ekadashi/${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Slug}`) }>
+          <button className="btn btn-primary" style={{ background: 'var(--gold-bright)', borderColor: 'var(--gold-bright)', color: 'var(--ink)', padding: '16px 28px', fontSize: 15 }} onClick={() => router.push(ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Slug ? `/ekadashi/${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Slug}` : '/') }>
             {`View ${ekadashiDetailData?.NextEkadashiLink?.ekadashis?.[0]?.Title} →`}
           </button>
         </div>

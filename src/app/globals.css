@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+Devanagari:wght@400;500&display=swap');
 /* ══════════════════════════════════════════
    KASHI SHAKTI - EXTENDED PRODUCTION CSS
    ══════════════════════════════════════════ */
@@ -45,7 +46,7 @@
 html, body { height: 100%; scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif !important;
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;

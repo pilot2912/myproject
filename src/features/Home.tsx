@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+"use client"
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from "next/navigation"
 import toast from 'react-hot-toast';
 import { fetchHomeData } from '../store/homeSlice';
 import type { RootState, AppDispatch } from '../store/store';
-import Loading from '../components/Loading';
 import { formatDate } from '../common/functions';
 
 interface SectionHeaderProps {
@@ -44,19 +44,20 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
 
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { loading, error, homeData } = useSelector((state: RootState) => state.home);
   const { nearestData } = useSelector((state: RootState) => state.global);
   const hasFetched = useRef(false);
 
-  const [now, setNow] = React.useState(Date.now());
+  const [now, setNow] = React.useState(0);
   React.useEffect(() => {
+    setNow(Date.now());
     const i = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(i);
   }, []);
 
   const [d, h, m, s, lunarData] = useMemo(() => {
-    if (!nearestData?.upcomingFestival?.Date) return [0,0,0,0];
+    if (!nearestData?.upcomingFestival?.Date) return [0,0,0,0, []];
 
     const targetDate = new Date(
       nearestData?.upcomingFestival?.Date + "T00:00:00"
@@ -90,9 +91,11 @@ const Home: React.FC = () => {
     }
   }, [error]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  const handleExternalLink = (link: string) => {
+    if (link?.length > 0) {
+      window.open(link, "_blank");
+    }
+  };
 
   return (
     <div className="page-enter" style={{ paddingBottom: 0 }}>
@@ -104,8 +107,7 @@ const Home: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          background: `linear-gradient(to bottom, rgba(30, 20, 16, 0.4), rgba(30, 20, 16, 0.85)), url("${homeData?.LandingPageBlock?.[0]?.HeroImage?.url}") center/cover no-repeat`,
-          backgroundAttachment: window.innerWidth > 768 ? 'fixed' : 'scroll',
+          background: `linear-gradient(to bottom, rgba(30, 20, 16, 0.4), rgba(30, 20, 16, 0.85)), url("${homeData?.LandingPageBlock?.[0]?.HeroImage?.url || ''}") center/cover no-repeat`,
           color: '#fff',
           padding: 'clamp(80px, 15vw, 140px) clamp(16px, 5vw, 40px) clamp(100px, 15vw, 180px)',
           textAlign: 'center',
@@ -123,15 +125,15 @@ const Home: React.FC = () => {
                 {homeData?.LandingPageBlock?.[0]?.HeroLink?.map((link: { id: number; label: string; href: string; isExternal: boolean; Button_Style: string }) => {
                   if (link?.Button_Style === 'PRIMARY') {
                     return <button key={link?.id} className="btn btn-primary" style={{ padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)', fontSize: 'clamp(13px, 2vw, 16px)', borderRadius: 12 }} onClick={() => { if (link?.isExternal) {
-                      window.open(link?.href, '_blank');
+                      handleExternalLink(link?.href);
                     } else {
-                      navigate(link?.href || '/');
+                      router.push(link?.href || '/');
                     }}}>{link?.label || ''} → </button>
                   } else {
                     return <button key={link?.id} className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.5)', padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)', fontSize: 'clamp(13px, 2vw, 16px)', borderRadius: 12, backdropFilter: 'blur(4px)' }} onClick={() => { if (link?.isExternal) {
-                      window.open(link?.href, '_blank');
+                      handleExternalLink(link?.href);
                     } else {
-                      navigate(link?.href || '/');
+                      router.push(link?.href || '/');
                     }}}>{link?.label || ''}</button>
                   }
                 })}
@@ -152,7 +154,7 @@ const Home: React.FC = () => {
                   <h2 className="display" style={{ fontSize: 'clamp(22px, 5vw, 32px)', color: 'var(--ink)' }}>{nearestData?.upcomingEkadashi?.Title || ''}</h2>
                   <div style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: 'var(--ink-muted)', marginTop: 8 }}>{nearestData?.upcomingEkadashi?.ShortDescription || ''}</div>
                </div>
-               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => navigate(`/ekadashi/${nearestData?.upcomingEkadashi?.Slug}`)}>View Timings →</button>
+               <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => router.push(nearestData?.upcomingEkadashi?.Slug ? `/ekadashi/${nearestData?.upcomingEkadashi?.Slug}` : '/')}>View Timings →</button>
             </div>
             
             {/* Festival Countdown */}
@@ -177,9 +179,9 @@ const Home: React.FC = () => {
       <div className="section-bg-pattern" style={{ padding: 'clamp(30px, 8vw, 40px) 0 clamp(50px, 8vw, 80px)', borderBottom: '1px solid var(--border-soft)' }}>
          <div className="container" style={{ position: 'relative', zIndex: 1 }}>
              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'clamp(30px, 5vw, 48px)', textAlign: 'center' }}>
-                 {homeData?.TrustBadges?.map((badge: { id?: string; image?: { url?: string }; Heading?: string; Description?: string }) => (
+                 {homeData?.TrustBadges?.map((badge: { id?: string; image: { url: string }; Heading?: string; Description?: string }) => (
                     <div key={badge?.id}>
-                     <img src={badge?.image?.url || ''} style={{ width: 'clamp(48px, 8vw, 64px)', height: 'clamp(48px, 8vw, 64px)', marginBottom: 'clamp(12px, 3vw, 20px)' }} alt="Badge"/>
+                     <img src={badge?.image?.url ? badge?.image?.url : undefined} style={{ width: 'clamp(48px, 8vw, 64px)', height: 'clamp(48px, 8vw, 64px)', marginBottom: 'clamp(12px, 3vw, 20px)' }} alt="Badge"/>
                      <h3 className="serif" style={{ fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 600, color: 'var(--ink)', marginBottom: 'clamp(8px, 2vw, 12px)' }}>{badge?.Heading || ''}</h3>
                      <p style={{ fontSize: 'clamp(13px, 2vw, 15px)', color: 'var(--ink-mid)', lineHeight: 1.6 }}>{badge?.Description || ''}</p>
                     </div>
@@ -208,7 +210,7 @@ const Home: React.FC = () => {
       {/* 4. Explore Temples (Immersive & Modern Layout) */}
       <div style={{ background: 'var(--ink)', color: 'var(--surface)', marginTop: 'clamp(60px, 10vw, 100px)', padding: 'clamp(50px, 8vw, 100px) 0' }}>
         <div className="container">
-           <SectionHeader align="center" title={homeData?.FeaturedTemples?.heading || ''} sub={homeData?.FeaturedTemples?.description || ''} color="var(--surface)" action={<button onClick={() => {homeData?.FeaturedTemples?.Link?.isExternal ? window.open(homeData?.FeaturedTemples?.Link?.href, '_blank') : navigate(homeData?.FeaturedTemples?.Link?.href)}} className="btn btn-ghost" style={{borderColor: 'rgba(255,255,255,0.3)', color: '#fff'}}>{`${homeData?.FeaturedTemples?.Link?.label} →`}</button>} />
+           <SectionHeader align="center" title={homeData?.FeaturedTemples?.heading || ''} sub={homeData?.FeaturedTemples?.description || ''} color="var(--surface)" action={<button onClick={() => {homeData?.FeaturedTemples?.Link?.isExternal ? handleExternalLink(homeData?.FeaturedTemples?.Link?.href) : router.push(homeData?.FeaturedTemples?.Link?.href || '/')}} className="btn btn-ghost" style={{borderColor: 'rgba(255,255,255,0.3)', color: '#fff'}}>{`${homeData?.FeaturedTemples?.Link?.label} →`}</button>} />
            
            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(16px, 3vw, 24px)', marginTop: 'clamp(30px, 5vw, 48px)' }}>
               {homeData?.FeaturedTemples?.temples?.map((tmpl: { id?: number; FeaturedImage?: { url?: string }; featured?: boolean; Title?: string; Location?: string }) => (
@@ -251,11 +253,11 @@ const Home: React.FC = () => {
          
          {/* Vrat Katha List */}
          <div>
-            <SectionHeader title={homeData?.FeaturedVrats?.heading || ''} sub={homeData?.FeaturedVrats?.Description || ''} action={<button onClick={() => {homeData?.FeaturedVrats?.VratLink?.isExternal ? window.open(homeData?.FeaturedVrats?.VratLink?.href, '_blank') : navigate(homeData?.FeaturedVrats?.VratLink?.href)}} className="btn-link">{`${homeData?.FeaturedVrats?.VratLink?.label || ''} →`}</button>}/>
+            <SectionHeader title={homeData?.FeaturedVrats?.heading || ''} sub={homeData?.FeaturedVrats?.Description || ''} action={<button onClick={() => {homeData?.FeaturedVrats?.VratLink?.isExternal ? handleExternalLink(homeData?.FeaturedVrats?.VratLink?.href) : router.push(homeData?.FeaturedVrats?.VratLink?.href || '/')}} className="btn-link">{`${homeData?.FeaturedVrats?.VratLink?.label || ''} →`}</button>}/>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(12px, 2vw, 16px)' }}>
                {homeData?.FeaturedVrats?.vrat_kathas?.map((katha: { id?: number; FeaturedImage?: { url?: string}; Title?: string; ShortDescription?: string }) => (
                  <div key={katha?.id} className="card card-hover katha-card" style={{ display: 'flex', width: '100%', padding: '12px 14px', alignItems: 'center', cursor: 'pointer', gap: '12px', textAlign: 'left' }}>
-                    <div className="bg-image-cover" style={{ width: 72, height: 72, minWidth: 72, borderRadius: 12, backgroundImage: `url(${katha?.FeaturedImage?.url})`, backgroundColor: 'grey', alignSelf: 'baseline' }}></div>
+                    <div className="bg-image-cover" style={{ width: 72, height: 72, minWidth: 72, borderRadius: 12, backgroundImage: `url(${katha?.FeaturedImage?.url || ''})`, backgroundColor: 'grey', alignSelf: 'baseline' }}></div>
                     <div className="alignMobile" style={{ flex: 1 }}>
                        <h4 className="serif" style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>{katha?.Title}</h4>
                        <p style={{ fontSize: 13, color: 'var(--ink-mid)', lineHeight: 1.5 }}>{katha?.ShortDescription}</p>
@@ -268,12 +270,12 @@ const Home: React.FC = () => {
 
          {/* Puja Vidhi Step Cards */}
          <div>
-            <SectionHeader title={homeData?.FeaturedPujaVidhi?.Heading || ''} sub={homeData?.FeaturedPujaVidhi?.description || ''} action={<button onClick={() => {homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.isExternal ? window.open(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href, '_blank') : navigate(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href)}} className="btn-link">{`${homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.label || ''} →`}</button>}/>
+            <SectionHeader title={homeData?.FeaturedPujaVidhi?.Heading || ''} sub={homeData?.FeaturedPujaVidhi?.description || ''} action={<button onClick={() => {homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.isExternal ? handleExternalLink(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href) : router.push(homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.href || '/')}} className="btn-link">{`${homeData?.FeaturedPujaVidhi?.PujaVidhiLink?.label || ''} →`}</button>}/>
             <div className="puja-grid" style={{ gap: 'clamp(16px, 2vw, 24px)' }}>
                {homeData?.FeaturedPujaVidhi?.puja_vidhis?.map((vidhi: { id?: number; FeaturedImage?: { url: string }; Title?: string }) => (
                  <div key={vidhi?.id} className="card card-hover puja-card" style={{ padding: 'clamp(20px, 2.5vw, 28px)', cursor: 'pointer', borderTop: '4px solid var(--maroon)', textAlign: 'center', minHeight: 220, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '20px', alignItems: 'center' }}>
-                      <img src={vidhi?.FeaturedImage?.url} alt={vidhi?.Title} style={{ width: '85px', height: '85px', objectFit: 'cover', marginBottom: '8px' }} />
+                      <img src={vidhi?.FeaturedImage?.url ? vidhi?.FeaturedImage?.url : undefined} alt={vidhi?.Title} style={{ width: '85px', height: '85px', objectFit: 'cover', marginBottom: '8px' }} />
                       <h4 className="serif" style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 600, marginBottom: 0 }}>{vidhi?.Title}</h4>
                     </div>
                  </div>
