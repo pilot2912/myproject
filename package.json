@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "5.15.11",
     "@reduxjs/toolkit": "1.9.7",
     "next": "16.2.6",
     "react": "18.2.0",
@@ -19,8 +20,8 @@
   },
   "devDependencies": {
     "@types/node": "25.7.0",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "typescript": "^5.2.2"
+    "@types/react": "18.2.37",
+    "@types/react-dom": "18.2.15",
+    "typescript": "5.2.2"
   }
 }
